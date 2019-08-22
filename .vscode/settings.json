@@ -1,0 +1,14 @@
+{
+    "sqltools.connections": [
+        {
+            "connectionTimeout": 30,
+            "database": "nors",
+            "dialect": "PostgreSQL",
+            "name": "nors",
+            "password": "admin",
+            "port": 5432,
+            "server": "127.0.0.1",
+            "username": "psm"
+        }
+    ]
+}
