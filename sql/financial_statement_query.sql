@@ -2,10 +2,13 @@
 -- We use a double query in order to get as output a table with the ies code, name and value
 -- The query inside FROM will agregate sum all values with similiar ies code
 -- The outside query will join the account name
-SELECT t."codigo ies", a.name_pt, t.total
+SELECT t.vat_number,t."codigo ies", a.name_pt, t.total, t.year,t.month 
 FROM (
     SELECT 
         ac.fs_account AS "codigo ies",
+        l.vat_number,
+        l.year,
+        l.month,
         -- COALESCE allows to create an option when the value returns NULL
         COALESCE(SUM(l.value),0) AS total
     FROM 
@@ -17,11 +20,12 @@ FROM (
         l.account_chart = ac.ldg_account
     GROUP BY 
         -- Group by ies account
-        ac.fs_account
+        ac.fs_account, l.vat_number, l.year, l.month
 ) AS t
 INNER JOIN account AS a
 ON t."codigo ies"=a.ies_id
 WHERE a.financial_statement = 'bs'; 
+
 
 
 
