@@ -1,0 +1,180 @@
+---
+title: "kpi dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny
+---
+
+```{r libraries, include=FALSE}
+library(flexdashboard)
+library(plotly)
+library(DT)
+library(knitr)
+library(RPostgreSQL)
+```
+
+```{r db connection, include = FALSE}
+sql_db <- dbConnect(drv = "PostgreSQL", 
+                 dbname = "nors",
+                 host = "localhost",
+                 port = 5432,
+                 user = "psm",
+                 password = "admin")
+```
+
+
+Sidebar {.sidebar}
+====================
+
+Global sidebar
+
+
+INTRO PAGE
+=======================================================================
+
+We can use plotly with ggplot code by doing ggplotly(my_ggplot)
+
+Column {data-width=200, .sidebar}
+-----------------------------------------------------------------------
+
+```{r}
+
+sliderInput("duration_slider",
+            label = "Select maximum trip duration to display (in minutes)",
+            min = 0,
+            max = 120,
+            value = 15,
+            step = 5,
+            dragRange = TRUE)
+
+# Example of reactive
+# show_trips_df <- reactive({
+#   
+#   trips_df %>% filter(duration_sec <= input$duration_slider * 60)
+# })
+
+# For value box we use renderValuebox and for plot renderPlot
+
+```
+
+
+Column {data-width=800}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+company <- dbGetQuery(sql_db, "SELECT name, vat_number FROM company;")
+
+datatable(
+  company, rownames = FALSE,
+  extensions = "Buttons", options = list(
+    dom = 'Bfrtip',
+    buttons = c("copy", "csv", "excel","pdf","print")
+    )
+  )
+```
+
+
+
+NEXT PAGE
+=======================================================================
+
+
+Column {data-width=650, .tabset}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+
+```
+
+> Teste para legendas
+
+### Chart D
+
+```{r}
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Total
+```{r}
+num <- sample(1000:9999,1)
+
+valueBox(value = prettyNum(num, big.mark = ".") ,
+         caption = "total number",
+         icon = "ion-quote")
+
+```
+
+
+### gauge
+```{r}
+num <- sample(1:100,1)
+
+gauge(value = num,
+      min = 0,
+      max = 100,
+      sectors = gaugeSectors(
+                  success = c(90, 100), 
+                  warning = c(70, 89), 
+                  danger = c(0, 69)
+                  ),
+      symbol = '%')
+
+
+```
+
+
+### Chart B
+
+```{r}
+
+```
+
+### Chart C
+
+```{r}
+
+```
+
+PAGE 2 {data-navmenu=More}
+=======================================================================
+
+
+PAGE 3 {data-navmenu=More}
+=======================================================================
+
+### Chart C
+
+```{r}
+
+```
+
+PAGE 4 {data-navmenu=More  .storyboard}
+=======================================================================
+
+### intro
+
+```{r}
+
+plot(dnorm(seq(-4,4,length = 100)), type = "l")
+
+```
+
+***
+
+Algum texto com contexto para o gráfico
+
+### after intro
+
+```{r}
+
+```
+

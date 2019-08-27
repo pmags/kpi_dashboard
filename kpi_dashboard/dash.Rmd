@@ -1,0 +1,234 @@
+---
+title: "Dash"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(lubridate)
+library(RPostgreSQL) # connects to database
+library(plotly) # allows for web friendly graphs
+library(DT) # allows for web friendly data table
+library(viridis) # plot color
+
+# Theme set for all plots
+theme_set(
+  theme_minimal() +
+    theme(legend.position = "right")
+  )
+
+```
+
+
+```{r connection to database, include = FALSE}
+
+db <- dbConnect(drv = "PostgreSQL", 
+                 dbname = "nors",
+                 host = "localhost",
+                 port = 5432,
+                 user = "psm",
+                 password = "admin")
+
+```
+
+
+```{r}
+data <- dbGetQuery(db,
+    "SELECT 
+        vat_number, account,year,month,value
+    FROM 
+        statements
+    WHERE 
+        account LIKE 'A00126'OR
+        account LIKE 'A00139'OR
+        account LIKE 'A00156'OR
+        account LIKE 'A00125'OR
+        account LIKE 'A00149'OR
+        account LIKE 'A00141'OR
+        account LIKE 'A00124'OR
+        account LIKE 'A00018'OR
+        account LIKE 'A00127'OR
+        account LIKE 'A00131'OR
+        account LIKE 'A00001'OR
+        account LIKE 'A00006'
+    ;") %>% 
+  filter(vat_number == 513259236) %>% 
+  spread(account,value) %>% 
+  mutate(
+    kpi0001 = A00139/A00126,
+    kpi0002 = (A00125 - A00156)/1000,
+    kpi0003 = A00125/A00156,
+    kpi0004 = (A00149 + A00141 - A00124)/A00018,
+    kpi0005 = A00139/A00127,
+    kpi0006 = A00131/A00127,
+    kpi0007 = (A00001-A00006)/A00001,
+    kpi0008 = A00018/A00001
+    ) %>% 
+  mutate(date = ymd(paste0(year,"-",month,"-01"))) %>% 
+  select(-vat_number, -year, -month) %>% 
+  select(date,everything()) %>% 
+  arrange(desc(date))
+```
+
+
+Sidebar {.sidebar}
+====================
+
+
+Overview
+=======================================================================
+
+Column {data-width=333}
+-----------------------------------------------------------------------
+
+### Autonomia financeira
+
+```{r}
+
+plot <- data %>% 
+  filter(month(date) == 12) %>% 
+  ggplot(aes(x = date, y = abs(kpi0001), group = 1)) +
+  geom_line(color =  "orange") +
+  geom_point(color =  "orange") + 
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  labs( x="",y = "")
+
+
+plotly::ggplotly(plot)
+
+```
+
+### Fundo de maneio
+
+```{r}
+
+plot <- data %>% 
+  filter(month(date) == 12) %>% 
+  ggplot(aes(x = date, y = abs(kpi0002), group = 1)) +
+  geom_line(color =  "orange") +
+  geom_point(color =  "orange") + 
+  labs( x="",y = "")
+
+
+plotly::ggplotly(plot)
+
+```
+
+### Liquidez geral
+
+```{r}
+
+plot <- data %>% 
+  filter(month(date) == 12) %>% 
+  ggplot(aes(x = date, y = abs(kpi0003), group = 1)) +
+  geom_line(color =  "orange") +
+  geom_point(color =  "orange") + 
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  labs( x="",y = "")
+
+
+plotly::ggplotly(plot)
+
+```
+
+Column {data-width=333}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+
+```
+
+### Margem bruta
+
+```{r}
+
+plot <- data %>% 
+  filter(month(date) == 12) %>% 
+  ggplot(aes(x = date, y = abs(kpi0007), group = 1)) +
+  geom_line(color =  "orange") +
+  geom_point(color =  "orange") + 
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  labs( x="",y = "")
+
+
+plotly::ggplotly(plot)
+
+```
+
+### Margem Ebitda
+
+```{r}
+
+plot <- data %>% 
+  filter(month(date) == 12) %>% 
+  ggplot(aes(x = date, y = abs(kpi0008), group = 1)) +
+  geom_line(color =  "orange") +
+  geom_point(color =  "orange") + 
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  labs( x="",y = "")
+
+
+plotly::ggplotly(plot)
+```
+
+Column {data-width=333}
+-----------------------------------------------------------------------
+
+### Net Debt to Ebitda
+
+```{r}
+
+plot <- data %>% 
+  filter(month(date) == 12) %>% 
+  ggplot(aes(x = date, y = abs(kpi0004), group = 1)) +
+  geom_line(color =  "orange") +
+  geom_point(color =  "orange") + 
+  labs( x="",y = "")
+
+
+plotly::ggplotly(plot)
+
+
+```
+
+### Monitorização art 35º
+
+```{r}
+
+num <- data %>% filter(month(date) == 12) %>% filter(date == max(date)) %>% select(kpi0005) %>% mutate(kpi0005 = scales::percent(kpi0005))
+
+valueBox(value = prettyNum(num, decimal.mark = ".") ,
+         caption = "Capital própio no Capial social",
+         icon = "ion-quote")
+
+```
+
+### Reservas legais
+
+```{r}
+
+num <- data %>% filter(month(date) == 12) %>% filter(date == max(date)) %>% select(kpi0006) %>% mutate(kpi0006 = scales::percent(kpi0006))
+
+valueBox(value = prettyNum(num, decimal.mark = ".") ,
+         caption = "Peso reservas legais",
+         icon = "ion-quote")
+
+```
+
+
+Finantials
+=======================================================================
+
+
+Liquidity {data-navmenu=Details}
+=======================================================================
+
+
+
