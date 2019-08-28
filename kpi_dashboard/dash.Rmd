@@ -2,12 +2,15 @@
 title: "Dash"
 output: 
   flexdashboard::flex_dashboard:
+    logo: www/paper_stack_icon_2.png
     orientation: columns
     vertical_layout: fill
+    theme: cerulean
 runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
+
 library(flexdashboard)
 library(tidyverse)
 library(lubridate)
@@ -19,8 +22,7 @@ library(viridis) # plot color
 # Theme set for all plots
 theme_set(
   theme_minimal() +
-    theme(legend.position = "right")
-  )
+    theme(legend.position = "right"))
 
 ```
 
@@ -36,48 +38,64 @@ db <- dbConnect(drv = "PostgreSQL",
 
 ```
 
-
 ```{r}
-data <- dbGetQuery(db,
-    "SELECT 
-        vat_number, account,year,month,value
-    FROM 
-        statements
-    WHERE 
-        account LIKE 'A00126'OR
-        account LIKE 'A00139'OR
-        account LIKE 'A00156'OR
-        account LIKE 'A00125'OR
-        account LIKE 'A00149'OR
-        account LIKE 'A00141'OR
-        account LIKE 'A00124'OR
-        account LIKE 'A00018'OR
-        account LIKE 'A00127'OR
-        account LIKE 'A00131'OR
-        account LIKE 'A00001'OR
-        account LIKE 'A00006'
-    ;") %>% 
-  filter(vat_number == 513259236) %>% 
-  spread(account,value) %>% 
-  mutate(
-    kpi0001 = A00139/A00126,
-    kpi0002 = (A00125 - A00156)/1000,
-    kpi0003 = A00125/A00156,
-    kpi0004 = (A00149 + A00141 - A00124)/A00018,
-    kpi0005 = A00139/A00127,
-    kpi0006 = A00131/A00127,
-    kpi0007 = (A00001-A00006)/A00001,
-    kpi0008 = A00018/A00001
-    ) %>% 
-  mutate(date = ymd(paste0(year,"-",month,"-01"))) %>% 
-  select(-vat_number, -year, -month) %>% 
-  select(date,everything()) %>% 
-  arrange(desc(date))
+
+data <- reactive({dbGetQuery(db,sqlInterpolate(ANSI(),
+                                "SELECT
+                                  vat_number, account,year,month,value
+                                FROM
+                                  ( SELECT
+                                        vat_number, account,year,month,value
+                                    FROM
+                                        statements
+                                    WHERE
+                                        account LIKE 'A00126'OR
+                                        account LIKE 'A00139'OR
+                                        account LIKE 'A00156'OR
+                                        account LIKE 'A00125'OR
+                                        account LIKE 'A00149'OR
+                                        account LIKE 'A00141'OR
+                                        account LIKE 'A00124'OR
+                                        account LIKE 'A00018'OR
+                                        account LIKE 'A00127'OR
+                                        account LIKE 'A00131'OR
+                                        account LIKE 'A00001'OR
+                                        account LIKE 'A00006'
+                                    ) AS t
+                                WHERE
+                                  vat_number = ?vat;",
+                                vat = input$company_select)) %>%
+    spread(account,value) %>%
+    mutate(
+      kpi0001 = A00139/A00126,
+      kpi0002 = (A00125 - A00156)/1000,
+      kpi0003 = A00125/A00156,
+      kpi0004 = (A00149 + A00141 - A00124)/A00018,
+      kpi0005 = A00139/A00127,
+      kpi0006 = A00131/A00127,
+      kpi0007 = (A00001-A00006)/A00001,
+      kpi0008 = A00018/A00001
+      ) %>%
+    mutate(date = ymd(paste0(year,"-",month,"-01"))) %>%
+    select(-vat_number, -year, -month) %>%
+    select(date,everything()) %>%
+    arrange(desc(date))})
+
 ```
 
 
 Sidebar {.sidebar}
 ====================
+
+```{r}
+company <- dbGetQuery(db,"SELECT vat_number, name FROM company;")
+choices <- split(company$vat_number,company$name)
+
+
+selectInput("company_select", h5("Select company"), 
+                       choices = choices, selected = "Galius")
+
+```
 
 
 Overview
@@ -90,16 +108,13 @@ Column {data-width=333}
 
 ```{r}
 
-plot <- data %>% 
-  filter(month(date) == 12) %>% 
+renderPlotly(
+  data() %>%
   ggplot(aes(x = date, y = abs(kpi0001), group = 1)) +
   geom_line(color =  "orange") +
-  geom_point(color =  "orange") + 
+  geom_point(color =  "orange") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  labs( x="",y = "")
-
-
-plotly::ggplotly(plot)
+  labs( x="",y = ""))
 
 ```
 
@@ -107,15 +122,14 @@ plotly::ggplotly(plot)
 
 ```{r}
 
-plot <- data %>% 
-  filter(month(date) == 12) %>% 
+renderPlotly(
+  data() %>% 
+  filter(month(date) == 12) %>%
   ggplot(aes(x = date, y = abs(kpi0002), group = 1)) +
   geom_line(color =  "orange") +
-  geom_point(color =  "orange") + 
+  geom_point(color =  "orange") +
   labs( x="",y = "")
-
-
-plotly::ggplotly(plot)
+  )
 
 ```
 
@@ -123,16 +137,15 @@ plotly::ggplotly(plot)
 
 ```{r}
 
-plot <- data %>% 
-  filter(month(date) == 12) %>% 
+renderPlotly(
+  data() %>% 
+  filter(month(date) == 12) %>%
   ggplot(aes(x = date, y = abs(kpi0003), group = 1)) +
   geom_line(color =  "orange") +
-  geom_point(color =  "orange") + 
+  geom_point(color =  "orange") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   labs( x="",y = "")
-
-
-plotly::ggplotly(plot)
+  )
 
 ```
 
@@ -149,16 +162,15 @@ Column {data-width=333}
 
 ```{r}
 
-plot <- data %>% 
+renderPlotly(
+  data() %>% 
   filter(month(date) == 12) %>% 
   ggplot(aes(x = date, y = abs(kpi0007), group = 1)) +
   geom_line(color =  "orange") +
-  geom_point(color =  "orange") + 
+  geom_point(color =  "orange") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   labs( x="",y = "")
-
-
-plotly::ggplotly(plot)
+)
 
 ```
 
@@ -166,16 +178,17 @@ plotly::ggplotly(plot)
 
 ```{r}
 
-plot <- data %>% 
-  filter(month(date) == 12) %>% 
+renderPlotly(
+  data() %>% 
+  filter(month(date) == 12) %>%
   ggplot(aes(x = date, y = abs(kpi0008), group = 1)) +
   geom_line(color =  "orange") +
-  geom_point(color =  "orange") + 
+  geom_point(color =  "orange") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   labs( x="",y = "")
 
+)
 
-plotly::ggplotly(plot)
 ```
 
 Column {data-width=333}
@@ -185,16 +198,14 @@ Column {data-width=333}
 
 ```{r}
 
-plot <- data %>% 
-  filter(month(date) == 12) %>% 
+renderPlotly(
+  plot <- data() %>% 
+  filter(month(date) == 12) %>%
   ggplot(aes(x = date, y = abs(kpi0004), group = 1)) +
   geom_line(color =  "orange") +
-  geom_point(color =  "orange") + 
+  geom_point(color =  "orange") +
   labs( x="",y = "")
-
-
-plotly::ggplotly(plot)
-
+)
 
 ```
 
@@ -202,11 +213,14 @@ plotly::ggplotly(plot)
 
 ```{r}
 
-num <- data %>% filter(month(date) == 12) %>% filter(date == max(date)) %>% select(kpi0005) %>% mutate(kpi0005 = scales::percent(kpi0005))
-
-valueBox(value = prettyNum(num, decimal.mark = ".") ,
+renderValueBox(
+valueBox(value = prettyNum(data() %>% 
+                              filter(month(date) == 12) %>% 
+                              filter(date == max(date)) %>% 
+                              select(kpi0005) %>%  
+                              mutate(kpi0005 = scales::percent(kpi0005)), decimal.mark = ".") ,
          caption = "Capital própio no Capial social",
-         icon = "ion-quote")
+         icon = "ion-quote"))
 
 ```
 
@@ -214,18 +228,54 @@ valueBox(value = prettyNum(num, decimal.mark = ".") ,
 
 ```{r}
 
-num <- data %>% filter(month(date) == 12) %>% filter(date == max(date)) %>% select(kpi0006) %>% mutate(kpi0006 = scales::percent(kpi0006))
-
-valueBox(value = prettyNum(num, decimal.mark = ".") ,
-         caption = "Peso reservas legais",
-         icon = "ion-quote")
+renderValueBox(
+  valueBox(value = prettyNum(data() %>% 
+                               filter(month(date) == 12) %>% 
+                               filter(date == max(date)) %>% 
+                               select(kpi0006) %>% 
+                               mutate(kpi0006 = scales::percent(kpi0006)), decimal.mark = "."),
+           caption = "Peso reservas legais",
+           icon = "ion-quote")
+)
 
 ```
 
 
-Finantials
+Financials
 =======================================================================
 
+```{r}
+
+query <- "SELECT vat_number,account,name_pt, year, month,value, financial_statement
+FROM statements AS s
+INNER JOIN account AS a 
+ON s.account = a.ies_id 
+WHERE vat_number = 513259236;"
+df <- dbGetQuery(db,query)
+  
+```
+
+
+Column {data-width=1000}
+-----------------------------------------------------------------------
+```{r}
+df <- df %>% 
+  mutate(date = paste0(month,"-",year)) %>% 
+  filter(financial_statement == "pl") %>%  
+  select(-year, -month,-vat_number,-financial_statement) %>% 
+  spread(date, value) %>% 
+  select(rubrica = name_pt, everything()) 
+  
+datatable(
+  df, rownames = FALSE,
+  extensions = "Buttons", options = list(
+    dom = 'Bfrtip',
+    buttons = c("copy", "csv", "excel","pdf","print")
+    )
+  )
+
+#knitr::kable(df)
+```
 
 Liquidity {data-navmenu=Details}
 =======================================================================
