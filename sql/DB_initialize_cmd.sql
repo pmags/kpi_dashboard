@@ -7,8 +7,8 @@
 -- Company table with information regarding each company
 CREATE TABLE company (
   vat_number INTEGER NOT NULL,
-  name VARCHAR(250),
-  street VARCHAR(250),
+  name TEXT,
+  street TEXT,
   zipCode VARCHAR(10),
   city VARCHAR(50),
   country VARCHAR(15),
@@ -23,7 +23,7 @@ CREATE TABLE ledger (
   year INTEGER,
   month INTEGER,
   account_chart INTEGER NOT NULL,
-  value FLOAT(2),
+  value FLOAT,
   PRIMARY KEY(id)
 );
 
@@ -31,10 +31,11 @@ CREATE TABLE ledger (
 CREATE TABLE statements (
   id SERIAL,
   vat_number INTEGER NOT NULL,
-  account VARCHAR(250) NOT NULL,
+  account VARCHAR(25) NOT NULL,
   year INTEGER,
   month INTEGER,
-  value FLOAT(2),
+  value FLOAT,
+  input_method VARCHAR(25),
   PRIMARY KEY (id)
 );
 
@@ -43,12 +44,16 @@ CREATE TABLE statements (
 
 -- Information regarding each financial statment account
 CREATE TABLE account (
-  ies_id VARCHAR(10) NOT NULL,
-  name_pt VARCHAR(250) NOT NULL,
-  name_en VARCHAR(250),
+  ies_id VARCHAR(25) NOT NULL,
+  name_pt TEXT NOT NULL,
+  name_en TEXT,
   financial_statement VARCHAR(5),
-  current_nonCurrent VARCHAR(10),
-  asset_liability_equity VARCHAR(10),
+  current_nonCurrent VARCHAR(2),
+  asset_liability_equity VARCHAR(2),
+  ebitda BOOLEAN,
+  ebit BOOLEAN,
+  ebt BOOLEAN,
+  net_results BOOLEAN,
   sum_value BOOLEAN,
   UNIQUE(ies_id),
   PRIMARY KEY (ies_id)
@@ -67,7 +72,7 @@ CREATE TABLE account (
 -- Creates table that will connect ledger to financial statement accounts
 CREATE TABLE account_chart (
   ldg_account INTEGER,
-  fs_account VARCHAR(10),
+  fs_account VARCHAR(25),
   PRIMARY KEY (ldg_account, fs_account),
   UNIQUE (ldg_account)
 );
@@ -80,6 +85,8 @@ CREATE TABLE account_chart (
 -- For one-one: use constraint
 -- For one-many: create foreign key at the end of relation
 -- For many-many: creates a new table which documents this relationship
+
+-- 
 
 -- 3.1. ONE company can have MULTIPLE financial statements
 

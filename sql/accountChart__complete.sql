@@ -10,7 +10,6 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(12030101,'A00124')
 ,(12030102,'A00124')
 ;
-
 INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (12040101,'A00124')
 ,(12040102,'A00124')
@@ -23,7 +22,6 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(12120102,'A00124')
 ,(16100000,'A00124')
 ;
-
 INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (17111000,'A00124')
 ,(17121000,'A00124')
@@ -46,21 +44,9 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(21800000,'A00147')
 ,(21910000,'A00115')
 ,(21920000,'A00115')
-,(22110100,'A00146 ')
-;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
-(22110400,'A00146 ')
-,(22110500,'A00146 ')
-,(22110600,'A00146 ')
-,(22120000,'A00146 ')
-,(22130000,'A00146 ')
-,(22160000,'A00146 ')
-,(22520000,'A00146 ')
-,(22530000,'A00146 ')
-,(22540000,'A00146 ')
 ,(22800000,'A90001')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (23120000,'A00150')
 ,(23220000,'A00150')
 ,(23300000,'A00150')
@@ -72,7 +58,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(24220000,'A00148')
 ,(24250000,'A00148')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (24321000,'A00148')
 ,(24322000,'A00148')
 ,(24323000,'A00148')
@@ -84,7 +70,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(24350000,'A00148')
 ,(24361000,'A00148')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (24380100,'A00148')
 ,(24412000,'A00148')
 ,(24500000,'A00148')
@@ -96,7 +82,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(27110000,'A00150')
 ,(27210100,'A00118')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (27210200,'A00118')
 ,(27210410,'A00118')
 ,(27211200,'A00118')
@@ -108,7 +94,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(27221116,'A00150')
 ,(27221117,'A00150')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (27221118,'A00150')
 ,(27221122,'A00150')
 ,(27221123,'A00150')
@@ -120,7 +106,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(27221311,'A00150')
 ,(27221400,'A00150')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (27221500,'A00150')
 ,(27221601,'A00150')
 ,(27221605,'A00150')
@@ -132,7 +118,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(27223190,'A00150')
 ,(27225000,'A00150')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (27226014,'A00150')
 ,(27226019,'A00150')
 ,(27229800,'A00150')
@@ -144,7 +130,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(27810502,'A00118')
 ,(27810503,'A00118')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (27810601,'A00118')
 ,(27810602,'A00118')
 ,(27810607,'A00118')
@@ -156,7 +142,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(28101100,'A00119')
 ,(28101200,'A00119')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (28102000,'A00119')
 ,(28103000,'A00119')
 ,(28105000,'A00119')
@@ -168,7 +154,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(28202000,'A00151')
 ,(28204000,'A00151')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (28208000,'A00151')
 ,(28210000,'A00151')
 ,(29200000,'A00140')
@@ -180,7 +166,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(31910000,'A00113')
 ,(31920000,'A00113')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (32011100,'A00113')
 ,(32011200,'A00113')
 ,(32012100,'A00113')
@@ -192,7 +178,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(32621000,'A00113')
 ,(32901100,'A00113')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (32901200,'A00113')
 ,(32905000,'A00113')
 ,(36200000,'A00113')
@@ -204,7 +190,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(43200000,'A00101')
 ,(43300000,'A00101')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (43400000,'A00101')
 ,(43500000,'A00101')
 ,(43700000,'A00101')
@@ -216,7 +202,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(44101000,'A00103')
 ,(44300000,'A00104')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (44510000,'A00104')
 ,(44830000,'A00104')
 ,(44851000,'A00104')
@@ -228,7 +214,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(61101140,'A00006')
 ,(61101160,'A00006')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (61101190,'A00006')
 ,(61101210,'A00006')
 ,(61101230,'A00006')
@@ -237,120 +223,120 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(61105210,'A00006')
 ,(61105291,'A00006')
 ,(61105293,'A00006')
-,(62101100,'A00007 ')
-,(62101200,'A00007 ')
+,(62101100,'A00007')
+,(62101200,'A00007')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
-(62102000,'A00007 ')
-,(62112000,'A00007 ')
-,(62210200,'A00007 ')
-,(62210300,'A00007 ')
-,(62210400,'A00007 ')
-,(62210500,'A00007 ')
-,(62210600,'A00007 ')
-,(62210800,'A00007 ')
-,(62210900,'A00007 ')
-,(62211100,'A00007 ')
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(62102000,'A00007')
+,(62112000,'A00007')
+,(62210200,'A00007')
+,(62210300,'A00007')
+,(62210400,'A00007')
+,(62210500,'A00007')
+,(62210600,'A00007')
+,(62210800,'A00007')
+,(62210900,'A00007')
+,(62211100,'A00007')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
-(62211600,'A00007 ')
-,(62212000,'A00007 ')
-,(62212210,'A00007 ')
-,(62212220,'A00007 ')
-,(62212240,'A00007 ')
-,(62212250,'A00007 ')
-,(62212311,'A00007 ')
-,(62212312,'A00007 ')
-,(62212400,'A00007 ')
-,(62212600,'A00007 ')
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(62211600,'A00007')
+,(62212000,'A00007')
+,(62212210,'A00007')
+,(62212220,'A00007')
+,(62212240,'A00007')
+,(62212250,'A00007')
+,(62212311,'A00007')
+,(62212312,'A00007')
+,(62212400,'A00007')
+,(62212600,'A00007')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
-(62213400,'A00007 ')
-,(62213600,'A00007 ')
-,(62213700,'A00007 ')
-,(62220100,'A00007 ')
-,(62220200,'A00007 ')
-,(62220300,'A00007 ')
-,(62220500,'A00007 ')
-,(62220600,'A00007 ')
-,(62220700,'A00007 ')
-,(62230100,'A00007 ')
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(62213400,'A00007')
+,(62213600,'A00007')
+,(62213700,'A00007')
+,(62220100,'A00007')
+,(62220200,'A00007')
+,(62220300,'A00007')
+,(62220500,'A00007')
+,(62220600,'A00007')
+,(62220700,'A00007')
+,(62230100,'A00007')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
-(62240300,'A00007 ')
-,(62260100,'A00007 ')
-,(62260200,'A00007 ')
-,(62260411,'A00007 ')
-,(62260421,'A00007 ')
-,(62260423,'A00007 ')
-,(62310000,'A00007 ')
-,(62330000,'A00007 ')
-,(62340200,'A00007 ')
-,(62349900,'A00007 ')
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(62240300,'A00007')
+,(62260100,'A00007')
+,(62260200,'A00007')
+,(62260411,'A00007')
+,(62260421,'A00007')
+,(62260423,'A00007')
+,(62310000,'A00007')
+,(62330000,'A00007')
+,(62340200,'A00007')
+,(62349900,'A00007')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
-(62350000,'A00007 ')
-,(62380100,'A00007 ')
-,(62410100,'A00007 ')
-,(62421111,'A00007 ')
-,(62421200,'A00007 ')
-,(62422111,'A00007 ')
-,(62422112,'A00007 ')
-,(62422121,'A00007 ')
-,(62430000,'A00007 ')
-,(62480100,'A00007 ')
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(62350000,'A00007')
+,(62380100,'A00007')
+,(62410100,'A00007')
+,(62421111,'A00007')
+,(62421200,'A00007')
+,(62422111,'A00007')
+,(62422112,'A00007')
+,(62422121,'A00007')
+,(62430000,'A00007')
+,(62480100,'A00007')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
-(62480300,'A00007 ')
-,(62480400,'A00007 ')
-,(62511208,'A00007 ')
-,(62512100,'A00007 ')
-,(62512201,'A00007 ')
-,(62512202,'A00007 ')
-,(62512203,'A00007 ')
-,(62532100,'A00007 ')
-,(62532300,'A00007 ')
-,(62610210,'A00007 ')
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(62480300,'A00007')
+,(62480400,'A00007')
+,(62511208,'A00007')
+,(62512100,'A00007')
+,(62512201,'A00007')
+,(62512202,'A00007')
+,(62512203,'A00007')
+,(62532100,'A00007')
+,(62532300,'A00007')
+,(62610210,'A00007')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
-(62610400,'A00007 ')
-,(62610641,'A00007 ')
-,(62610642,'A00007 ')
-,(62620100,'A00007 ')
-,(62620200,'A00007 ')
-,(62620300,'A00007 ')
-,(62620400,'A00007 ')
-,(62620500,'A00007 ')
-,(62620600,'A00007 ')
-,(62630111,'A00007 ')
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(62610400,'A00007')
+,(62610641,'A00007')
+,(62610642,'A00007')
+,(62620100,'A00007')
+,(62620200,'A00007')
+,(62620300,'A00007')
+,(62620400,'A00007')
+,(62620500,'A00007')
+,(62620600,'A00007')
+,(62630111,'A00007')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
-(62630121,'A00007 ')
-,(62630130,'A00007 ')
-,(62630150,'A00007 ')
-,(62630191,'A00007 ')
-,(62630400,'A00007 ')
-,(62630500,'A00007 ')
-,(62630600,'A00007 ')
-,(62630701,'A00007 ')
-,(62630799,'A00007 ')
-,(62630900,'A00007 ')
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(62630121,'A00007')
+,(62630130,'A00007')
+,(62630150,'A00007')
+,(62630191,'A00007')
+,(62630400,'A00007')
+,(62630500,'A00007')
+,(62630600,'A00007')
+,(62630701,'A00007')
+,(62630799,'A00007')
+,(62630900,'A00007')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
-(62650100,'A00007 ')
-,(62650200,'A00007 ')
-,(62660200,'A00007 ')
-,(62660700,'A00007 ')
-,(62670100,'A00007 ')
-,(62670200,'A00007 ')
-,(62680104,'A00007 ')
-,(62680107,'A00007 ')
-,(62680402,'A00007 ')
-,(62680501,'A00007 ')
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(62650100,'A00007')
+,(62650200,'A00007')
+,(62660200,'A00007')
+,(62660700,'A00007')
+,(62670100,'A00007')
+,(62670200,'A00007')
+,(62680104,'A00007')
+,(62680107,'A00007')
+,(62680402,'A00007')
+,(62680501,'A00007')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
-(62680502,'A00007 ')
-,(62689800,'A00007 ')
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(62680502,'A00007')
+,(62689800,'A00007')
 ,(63211100,'A00008')
 ,(63211200,'A00008')
 ,(63211300,'A00008')
@@ -360,7 +346,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(63221121,'A00008')
 ,(63221122,'A00008')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (63221123,'A00008')
 ,(63221212,'A00008')
 ,(63221213,'A00008')
@@ -372,7 +358,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(63222021,'A00008')
 ,(63222031,'A00008')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (63222032,'A00008')
 ,(63222033,'A00008')
 ,(63222041,'A00008')
@@ -384,7 +370,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(63233000,'A00008')
 ,(63240000,'A00008')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (63251110,'A00008')
 ,(63251120,'A00008')
 ,(63251130,'A00008')
@@ -396,7 +382,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(63269910,'A00008')
 ,(63269920,'A00008')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (63269930,'A00008')
 ,(63410000,'A00008')
 ,(63521100,'A00008')
@@ -408,7 +394,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(63523100,'A00008')
 ,(63523200,'A00008')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (63523300,'A00008')
 ,(63524100,'A00008')
 ,(63524200,'A00008')
@@ -420,7 +406,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(63720120,'A00008')
 ,(63720130,'A00008')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (63720620,'A00008')
 ,(63720630,'A00008')
 ,(63720700,'A00008')
@@ -432,7 +418,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(63801100,'A00008')
 ,(63802100,'A00008')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (63803000,'A00008')
 ,(63804000,'A00008')
 ,(63807011,'A00008')
@@ -444,7 +430,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(64250000,'A00019')
 ,(64270000,'A00019')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (65111000,'A00011')
 ,(65112000,'A00011')
 ,(65211100,'A00010')
@@ -456,7 +442,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(68120320,'A00017')
 ,(68139000,'A00017')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (68220000,'A00017')
 ,(68811000,'A00017')
 ,(68812000,'A00017')
@@ -468,7 +454,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(68870500,'A00017')
 ,(68870712,'A00017')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (68871000,'A00017')
 ,(68880610,'A00017')
 ,(68880624,'A00017')
@@ -480,7 +466,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(69110701,'A00023')
 ,(69110901,'A00023')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (69180100,'A00023')
 ,(69180200,'A00023')
 ,(69231000,'A00023')
@@ -492,7 +478,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(69820500,'A00023')
 ,(69820700,'A00023')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (69820800,'A00023')
 ,(69820900,'A00023')
 ,(69821000,'A00023')
@@ -504,7 +490,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(71101220,'A00001')
 ,(71105211,'A00001')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (71108110,'A00001')
 ,(71710112,'A00001')
 ,(71710113,'A00001')
@@ -516,7 +502,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(71810119,'A00001')
 ,(71810527,'A00001')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (72011120,'A00001')
 ,(72050000,'A00001')
 ,(72501300,'A00001')
@@ -528,7 +514,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(74510000,'A00005')
 ,(76211100,'A00011')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (76211200,'A00011')
 ,(76221210,'A00010')
 ,(78160202,'A00016')
@@ -540,7 +526,7 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(78860430,'A00016')
 ,(78860505,'A00016')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (78860508,'A00016')
 ,(78860511,'A00016')
 ,(78860599,'A00016')
@@ -552,7 +538,356 @@ INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
 ,(81100000,'A00024')
 ,(81121000,'A00025')
 ;
-INSERT INTO public.account_chart (ldg_account,fs_account) VALUES
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
 (81122000,'A00025')
 ,(81800000,'A00026')
+,(11210500,'A00124')
+,(11212500,'A00124')
+,(11220300,'A00124')
+,(11220400,'A00124')
+,(11221000,'A00124')
+,(11230100,'A00124')
+,(11230400,'A00124')
+,(12010501,'A00124')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(12010502,'A00124')
+,(12010601,'A00124')
+,(12010602,'A00124')
+,(12012501,'A00124')
+,(12020601,'A00124')
+,(12030401,'A00124')
+,(12041101,'A00124')
+,(12050501,'A00124')
+,(12050502,'A00124')
+,(12050701,'A00124')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(12050702,'A00124')
+,(12080102,'A00124')
+,(21110300,'A00115')
+,(21170000,'A00115')
+,(21210100,'A00115')
+,(23812000,'A00150')
+,(24170000,'A00148')
+,(24260000,'A00148')
+,(24332000,'A00148')
+,(24370000,'A00148')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(25312000,'A00149')
+,(27210420,'A00118')
+,(27210700,'A00118')
+,(27211000,'A00118')
+,(27221603,'A00150')
+,(27221604,'A00150')
+,(27223040,'A00150')
+,(27223140,'A00150')
+,(27223150,'A00150')
+,(27223180,'A00150')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(27223200,'A00150')
+,(27226012,'A00150')
+,(27226013,'A00150')
+,(27810300,'A00118')
+,(27810406,'A00118')
+,(27820300,'A00150')
+,(27820400,'A00150')
+,(27829000,'A00150')
+,(28106000,'A00119')
+,(28109000,'A00119')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(28110000,'A00119')
+,(28111000,'A00119')
+,(28207000,'A00151')
+,(31101190,'A00113')
+,(31102110,'A00113')
+,(31102120,'A00113')
+,(31102210,'A00113')
+,(31105100,'A00113')
+,(31810224,'A00113')
+,(31810521,'A00113')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(32021100,'A00113')
+,(32021200,'A00113')
+,(32021300,'A00113')
+,(32022100,'A00113')
+,(32022200,'A00113')
+,(32022300,'A00113')
+,(32050100,'A00113')
+,(32502000,'A00113')
+,(32902100,'A00113')
+,(32902200,'A00113')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(36100000,'A00113')
+,(38011110,'A00113')
+,(38012130,'A00113')
+,(38021130,'A00113')
+,(53100000,'A00129')
+,(55221500,'A00131')
+,(55224000,'A00131')
+,(55229000,'A00131')
+,(56200000,'A00133')
+,(56300000,'A00133')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(56400000,'A00133')
+,(61102110,'A00006')
+,(61102120,'A00006')
+,(61102140,'A00006')
+,(61102160,'A00006')
+,(61102190,'A00006')
+,(61102210,'A00006')
+,(61102220,'A00006')
+,(61102240,'A00006')
+,(61102250,'A00006')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(61102290,'A00006')
+,(61105100,'A00006')
+,(61105294,'A00006')
+,(62211400,'A00007')
+,(62211800,'A00007')
+,(62211900,'A00007')
+,(62212100,'A00007')
+,(62212230,'A00007')
+,(62212300,'A00007')
+,(62212700,'A00007')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(62213000,'A00007')
+,(62213201,'A00007')
+,(62214000,'A00007')
+,(62239900,'A00007')
+,(62240400,'A00007')
+,(62240790,'A00007')
+,(62240900,'A00007')
+,(62241700,'A00007')
+,(62250100,'A00007')
+,(62250300,'A00007')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(62260300,'A00007')
+,(62260413,'A00007')
+,(62260414,'A00007')
+,(62320200,'A00007')
+,(62320300,'A00007')
+,(62340100,'A00007')
+,(62340400,'A00007')
+,(62340500,'A00007')
+,(62421112,'A00007')
+,(62421121,'A00007')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(62422200,'A00007')
+,(62422400,'A00007')
+,(62480200,'A00007')
+,(62511201,'A00007')
+,(62520000,'A00007')
+,(62610220,'A00007')
+,(62610300,'A00007')
+,(62610500,'A00007')
+,(62610630,'A00007')
+,(62610643,'A00007')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(62610644,'A00007')
+,(62630160,'A00007')
+,(62630192,'A00007')
+,(62660100,'A00007')
+,(62680301,'A00007')
+,(62680503,'A00007')
+,(62680504,'A00007')
+,(62680600,'A00007')
+,(62680800,'A00007')
+,(62680900,'A00007')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(62689900,'A00007')
+,(63150100,'A00008')
+,(63221111,'A00008')
+,(63221211,'A00008')
+,(63222023,'A00008')
+,(63252100,'A00008')
+,(63252200,'A00008')
+,(63252300,'A00008')
+,(63260210,'A00008')
+,(63260220,'A00008')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(63260230,'A00008')
+,(63421000,'A00008')
+,(63720210,'A00008')
+,(63720220,'A00008')
+,(63720230,'A00008')
+,(63720610,'A00008')
+,(63721110,'A00008')
+,(63729900,'A00008')
+,(63802200,'A00008')
+,(63807012,'A00008')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(63807013,'A00008')
+,(63807033,'A00008')
+,(63807041,'A00008')
+,(63807051,'A00008')
+,(63807052,'A00008')
+,(63807053,'A00008')
+,(63807063,'A00008')
+,(64330000,'A00019')
+,(64351000,'A00019')
+,(65211000,'A00011')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(68120111,'A00017')
+,(68120113,'A00017')
+,(68120114,'A00017')
+,(68120121,'A00017')
+,(68120311,'A00017')
+,(68131000,'A00017')
+,(68133000,'A00017')
+,(68300000,'A00017')
+,(68411000,'A00017')
+,(68412000,'A00017')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(68420000,'A00017')
+,(68813000,'A00017')
+,(68814000,'A00017')
+,(68819000,'A00017')
+,(68821210,'A00017')
+,(68821220,'A00017')
+,(68821230,'A00017')
+,(68821300,'A00017')
+,(68830000,'A00017')
+,(68841000,'A00017')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(68842000,'A00017')
+,(68843000,'A00017')
+,(68849000,'A00017')
+,(68870160,'A00017')
+,(68870711,'A00017')
+,(68870713,'A00017')
+,(68870715,'A00017')
+,(68870716,'A00017')
+,(68870718,'A00017')
+,(68870820,'A00017')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(68870900,'A00017')
+,(68871100,'A00017')
+,(68871200,'A00017')
+,(68871300,'A00017')
+,(68880200,'A00017')
+,(68880623,'A00017')
+,(68880631,'A00017')
+,(68889900,'A00017')
+,(69110801,'A00023')
+,(69131000,'A00023')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(69180300,'A00023')
+,(69180500,'A00023')
+,(69211000,'A00023')
+,(69221000,'A00023')
+,(69232000,'A00023')
+,(69820400,'A00023')
+,(69820600,'A00023')
+,(69880000,'A00023')
+,(71102110,'A00001')
+,(71102120,'A00001')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(71102190,'A00001')
+,(71102210,'A00001')
+,(71102220,'A00001')
+,(71102290,'A00001')
+,(71105110,'A00001')
+,(71105120,'A00001')
+,(71105130,'A00001')
+,(71710511,'A00001')
+,(71710512,'A00001')
+,(71810212,'A00001')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(71810213,'A00001')
+,(71810223,'A00001')
+,(71810511,'A00001')
+,(72011110,'A00001')
+,(72011210,'A00001')
+,(72011310,'A00001')
+,(72011410,'A00001')
+,(72011420,'A00001')
+,(72012110,'A00001')
+,(72012210,'A00001')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(72501100,'A00001')
+,(72502100,'A00001')
+,(72503300,'A00001')
+,(72509011,'A00001')
+,(72509012,'A00001')
+,(72701111,'A00001')
+,(72701121,'A00001')
+,(72701131,'A00001')
+,(72701141,'A00001')
+,(72801190,'A00001')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(74520000,'A00005')
+,(74540000,'A00005')
+,(74550000,'A00005')
+,(76221100,'A00010')
+,(76221110,'A00010')
+,(76221120,'A00010')
+,(78110000,'A00016')
+,(78160300,'A00016')
+,(78300000,'A00016')
+,(78411000,'A00016')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(78420000,'A00016')
+,(78613100,'A00016')
+,(78613200,'A00016')
+,(78712100,'A00016')
+,(78782000,'A00016')
+,(78811000,'A00016')
+,(78813000,'A00016')
+,(78819000,'A00016')
+,(78860120,'A00016')
+,(78860130,'A00016')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(78860220,'A00016')
+,(78860513,'A00016')
+,(78860515,'A00016')
+,(78880303,'A00016')
+,(78880500,'A00016')
+,(78889900,'A00016')
+,(79180100,'A00022')
+,(45300000,'A00101')
+,(45400000,'A00104')
+,(81220000,'A00026')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(22110100,'A00146')
+,(22110400,'A00146')
+,(22110500,'A00146')
+,(22110600,'A00146')
+,(22120000,'A00146')
+,(22130000,'A00146')
+,(22160000,'A00146')
+,(22520000,'A00146')
+,(22530000,'A00146')
+,(22540000,'A00146')
+;
+INSERT INTO public.account_chart (ldg_account,fs_account) VALUES 
+(22110300,'A00146')
+,(22170000,'A00146')
+,(22190000,'A00146')
 ;

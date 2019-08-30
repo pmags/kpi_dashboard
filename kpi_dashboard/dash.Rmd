@@ -83,17 +83,19 @@ data <- reactive({dbGetQuery(db,sqlInterpolate(ANSI(),
 
 ```
 
-
 Sidebar {.sidebar}
 ====================
 
 ```{r}
 company <- dbGetQuery(db,"SELECT vat_number, name FROM company;")
+Encoding(company$name) <- "UTF-8"
+
 choices <- split(company$vat_number,company$name)
 
+div(style = "font-size:9pt",
+    selectInput("company_select", h5("Select company"), 
+                       choices = choices, selected = "Galius"))
 
-selectInput("company_select", h5("Select company"), 
-                       choices = choices, selected = "Galius")
 
 ```
 
@@ -252,33 +254,87 @@ INNER JOIN account AS a
 ON s.account = a.ies_id 
 WHERE vat_number = 513259236;"
 df <- dbGetQuery(db,query)
+
+df <- df %>% 
+  mutate(date = paste0(month,"-",year)) %>% 
+  select(-year, -month,-vat_number) %>% 
+  spread(date, value) %>% 
+  select(rubrica = name_pt, everything())
+
+Encoding(df$rubrica) <- "UTF-8"
   
 ```
 
 
-Column {data-width=1000}
+Column {.tabset}
 -----------------------------------------------------------------------
-```{r}
-df <- df %>% 
-  mutate(date = paste0(month,"-",year)) %>% 
-  filter(financial_statement == "pl") %>%  
-  select(-year, -month,-vat_number,-financial_statement) %>% 
-  spread(date, value) %>% 
-  select(rubrica = name_pt, everything()) 
-  
-datatable(
-  df, rownames = FALSE,
-  extensions = "Buttons", options = list(
-    dom = 'Bfrtip',
-    buttons = c("copy", "csv", "excel","pdf","print")
-    )
-  )
 
-#knitr::kable(df)
+### Balance Sheet
+
+```{r}
+
+df %>% 
+  filter(financial_statement == "bs") %>%
+  select(-financial_statement) %>% 
+  DT::datatable(
+  #rownames = FALSE,
+  extensions = "Buttons",
+  options = list(
+    # adds buttons
+    dom = 'Bfrtip',
+    buttons = c("copy", "csv", "excel","pdf","print"),
+    # number of entries on display
+    pageLength = 100,
+    initComplete = JS(
+       "function(settings, json) {",
+        "$(this.api().table().header()).css({'font-size': '9pt'});",
+        "}"
+    )), 
+  fillContainer = TRUE) %>% 
+  DT::formatStyle(colnames(select(df,-financial_statement)), fontSize = "9pt") %>%
+  DT::formatStyle("account",
+                  target = "row", 
+                  fontWeight = styleEqual(c("A00112","A00125","A00126","A00136","A00139","A00145","A00156","A00157","A00158"),
+                                          c("bold","bold","bold","bold","bold","bold","bold","bold","bold"))) %>% 
+  DT::formatRound(columns = colnames(select(df,-financial_statement,-rubrica,-account)), digits = 0, mark = ".") 
+
+```
+
+### Profit & Loss
+
+```{r}
+
+df %>% 
+  filter(financial_statement == "pl") %>%
+  select(-financial_statement) %>% 
+  DT::datatable(
+  #rownames = FALSE,
+  extensions = "Buttons",
+  options = list(
+    # adds buttons
+    dom = 'Bfrtip',
+    buttons = c("copy", "csv", "excel","pdf","print"),
+    # number of entries on display
+    pageLength = 100,
+    initComplete = JS(
+       "function(settings, json) {",
+        "$(this.api().table().header()).css({'font-size': '9pt'});",
+        "}"
+    )), 
+  fillContainer = TRUE) %>% 
+  DT::formatStyle(colnames(select(df,-financial_statement)), fontSize = "9pt") %>%
+  DT::formatStyle("account",
+                  target = "row", 
+                  fontWeight = styleEqual(c("A00018","A00021","A00024","A00026"),
+                                          c("bold","bold","bold","bold"))) %>% 
+  DT::formatRound(columns = colnames(select(df,-financial_statement,-rubrica,-account)), digits = 0, mark = ".") 
+
 ```
 
 Liquidity {data-navmenu=Details}
 =======================================================================
 
 
+Market
+=======================================================================
 

@@ -1,227 +1,133 @@
--- total asset non current values from ledger
-INSERT INTO statements (account,vat_number,year,month,value)
--- selects all columns from the query result
-SELECT 
-    'A00112' AS account,
-    vat_number,
-    year,
-    month,
-    -- COALESCE allows to create an option when the value returns NULL
-    COALESCE(SUM(value),0) AS value
-FROM 
-    statements AS s,(
-            SELECT ies_id
-            FROM account AS a
-            WHERE a.financial_statement LIKE 'bs' AND
+
+-- This sql scripts calculates all subtotals from ledger information 
+-- and inserts the results into statements table
+
+INSERT INTO statements (input_method,account,vat_number,year,month,value)
+SELECT 'ledger' AS input_method, flag AS account, vat_number, year, month, value
+FROM(
+    SELECT vat_number, 
+        year, 
+        month,
+        CAST(sum(value) AS float) AS value,
+        CASE 
+            WHEN 
                 a.current_noncurrent LIKE 'nc' AND
-                a.asset_liability_equity LIKE 'a' AND
-                a.sum_value = FALSE) 
-        AS f
-        
-WHERE s.account = f.ies_id AND month != 12
-GROUP BY vat_number,year,month
-
- EXCEPT
-
-    -- Query 2 selects all values of table statements
-    SELECT 
-        account,vat_number,year,month, value
-    FROM 
-        statements;
-
-
--- #########################################################################
--- 
--- total asset current values from ledger
-INSERT INTO statements (account,vat_number,year,month,value)
--- selects all columns from the query result
-SELECT 
-    'A00126' AS account,
-    vat_number,
-    year,
-    month,
-    -- COALESCE allows to create an option when the value returns NULL
-    COALESCE(SUM(value),0) AS value
-FROM 
-    statements AS s,(
-            SELECT ies_id
-            FROM account AS a
-            WHERE a.financial_statement LIKE 'bs' AND
+                a.asset_liability_equity LIKE 'a'
+            THEN 'A00112'
+            
+            WHEN
                 a.current_noncurrent LIKE 'c' AND
-                a.asset_liability_equity LIKE 'a' AND
-                a.sum_value = FALSE) 
-        AS f
-        
-WHERE s.account = f.ies_id AND month != 12
-GROUP BY vat_number,year,month
+                a.asset_liability_equity LIKE 'a' 
+            THEN 'A00125'
 
- EXCEPT
-
-    -- Query 2 selects all values of table statements
-    SELECT 
-        account,vat_number,year,month, value
-    FROM 
-        statements;
-
--- #########################################################################
--- 
--- total equity values from ledger
-INSERT INTO statements (account,vat_number,year,month,value)
--- selects all columns from the query result
-SELECT 
-    'A00139' AS account,
-    vat_number,
-    year,
-    month,
-    -- COALESCE allows to create an option when the value returns NULL
-    COALESCE(SUM(value),0) AS value
-FROM 
-    statements AS s,(
-            SELECT ies_id
-            FROM account AS a
-            WHERE a.financial_statement LIKE 'bs' AND
-                a.asset_liability_equity LIKE 'e' AND
-                a.sum_value = FALSE) 
-        AS f
-        
-WHERE s.account = f.ies_id AND month != 12
-GROUP BY vat_number,year,month
-
- EXCEPT
-
-    -- Query 2 selects all values of table statements
-    SELECT 
-        account,vat_number,year,month, value
-    FROM 
-        statements;
-
--- #########################################################################
--- 
--- total non current liabilities values from ledger
-INSERT INTO statements (account,vat_number,year,month,value)
--- selects all columns from the query result
-SELECT 
-    'A00145' AS account,
-    vat_number,
-    year,
-    month,
-    -- COALESCE allows to create an option when the value returns NULL
-    COALESCE(SUM(value),0) AS value
-FROM 
-    statements AS s,(
-            SELECT ies_id
-            FROM account AS a
-            WHERE a.financial_statement LIKE 'bs' AND
+            WHEN
                 a.current_noncurrent LIKE 'nc' AND
-                a.asset_liability_equity LIKE 'p' AND
-                a.sum_value = FALSE) 
-        AS f
-        
-WHERE s.account = f.ies_id AND month != 12
-GROUP BY vat_number,year,month
+                a.asset_liability_equity LIKE 'p' 
+            THEN 'A00145'
 
- EXCEPT
-
-    -- Query 2 selects all values of table statements
-    SELECT 
-        account,vat_number,year,month, value
-    FROM 
-        statements;
-
--- #########################################################################
--- 
--- total current liabilities values from ledger
-INSERT INTO statements (account,vat_number,year,month,value)
--- selects all columns from the query result
-SELECT 
-    'A00156' AS account,
-    vat_number,
-    year,
-    month,
-    -- COALESCE allows to create an option when the value returns NULL
-    COALESCE(SUM(value),0) AS value
-FROM 
-    statements AS s,(
-            SELECT ies_id
-            FROM account AS a
-            WHERE a.financial_statement LIKE 'bs' AND
+            WHEN
                 a.current_noncurrent LIKE 'c' AND
-                a.asset_liability_equity LIKE 'p' AND
-                a.sum_value = FALSE) 
-        AS f
-        
-WHERE s.account = f.ies_id AND month != 12
-GROUP BY vat_number,year,month
+                a.asset_liability_equity LIKE 'p' 
+            THEN 'A00156'
 
- EXCEPT
+            WHEN
+                a.ebitda = TRUE
+            THEN 'A00018'
+            
+            ELSE 'unk'
+        END AS flag
+    FROM statements AS s
+    INNER JOIN account AS a
+    ON account = ies_id
+    WHERE sum_value = FALSE AND s.input_method NOT LIKE 'import'
+    -- based on groups/flags created above it sums values
+    GROUP BY vat_number, year, month, flag
 
-    -- Query 2 selects all values of table statements
-    SELECT 
-        account,vat_number,year,month, value
-    FROM 
-        statements;
+    UNION ALL
 
+    SELECT vat_number, 
+        year, 
+        month,
+        CAST(sum(value) AS float) AS value,
+        CASE
 
--- #########################################################################
--- 
--- total total liabilities from ledger
-INSERT INTO statements (account,vat_number,year,month,value)
--- selects all columns from the query result
-SELECT 
-    'A00157' AS account,
-    vat_number,
-    year,
-    month,
-    -- COALESCE allows to create an option when the value returns NULL
-    COALESCE(SUM(value),0) AS value
-FROM 
-    statements AS s,(
-            SELECT ies_id
-            FROM account AS a
-            WHERE a.financial_statement LIKE 'bs' AND
-                a.asset_liability_equity LIKE 'p' AND
-                a.sum_value = FALSE) 
-        AS f
-        
-WHERE s.account = f.ies_id AND month != 12
-GROUP BY vat_number,year,month
+            WHEN 
+                a.asset_liability_equity LIKE 'a'
+            THEN 'A00126' 
+            
+            WHEN 
+                a.asset_liability_equity LIKE 'p'
+            THEN 'A00157'
 
- EXCEPT
+            WHEN
+                a.asset_liability_equity LIKE 'e'
+            THEN 'A00139'
 
-    -- Query 2 selects all values of table statements
-    SELECT 
-        account,vat_number,year,month, value
-    FROM 
-        statements;
+            WHEN
+                a.ebit = TRUE
+            THEN 'A00021'
 
--- #########################################################################
--- 
--- total total liabilities & equity from ledger
-INSERT INTO statements (account,vat_number,year,month,value)
--- selects all columns from the query result
-SELECT 
-    'A00158' AS account,
-    vat_number,
-    year,
-    month,
-    -- COALESCE allows to create an option when the value returns NULL
-    COALESCE(SUM(value),0) AS value
-FROM 
-    statements AS s,(
-            SELECT ies_id
-            FROM account AS a
-            WHERE 
+            ELSE 'unk'
+        END AS flag
+    FROM statements AS s
+    INNER JOIN account AS a
+    ON account = ies_id
+    WHERE sum_value = FALSE  AND s.input_method NOT LIKE 'import'
+    GROUP BY vat_number, year, month, flag
+
+    UNION ALL
+
+    SELECT vat_number, 
+        year, 
+        month,
+        CAST(sum(value) AS float) AS value,
+        CASE 
+            WHEN 
                 a.asset_liability_equity LIKE 'p' OR 
-                a.asset_liability_equity LIKE 'e   ') 
-        AS f
-        
-WHERE s.account = f.ies_id AND month != 12
-GROUP BY vat_number,year,month
+                    a.asset_liability_equity LIKE 'e'
+            THEN 'A00158'
 
- EXCEPT
+            WHEN
+                a.ebt = TRUE
+            THEN 'A00024'
 
-    -- Query 2 selects all values of table statements
-    SELECT 
-        account,vat_number,year,month, value
-    FROM 
-        statements;
+            ELSE 'unk'
+        END AS flag
+    FROM statements AS s
+    INNER JOIN account AS a
+    ON account = ies_id
+    WHERE sum_value = FALSE  AND s.input_method NOT LIKE 'import'
+    GROUP BY vat_number, year, month, flag
+
+    UNION ALL
+
+    SELECT vat_number, 
+        year, 
+        month,
+        CAST(sum(value) AS float) AS value,
+        CASE 
+            WHEN
+                a.net_results = TRUE
+            THEN 'A00027'
+
+            ELSE 'unk'
+        END AS flag
+    FROM statements AS s
+    INNER JOIN account AS a
+    ON account = ies_id
+    WHERE sum_value = FALSE  AND s.input_method NOT LIKE 'import'
+    GROUP BY vat_number, year, month, flag
+) AS filter
+
+WHERE filter.flag NOT LIKE 'unk'
+
+-- the except function returns all values which are included on query 1 but not on query 2
+EXCEPT
+
+-- Query 2 selects all values of table statements
+SELECT 
+    input_method,account,vat_number,year,month, value
+FROM 
+    statements;
+
+

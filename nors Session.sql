@@ -1,5 +1,4 @@
-SELECT vat_number,name_pt, year, month,value, financial_statement
-FROM statements AS s
-INNER JOIN account AS a 
-ON s.account = a.ies_id 
-WHERE vat_number = 513259236;
+      
+
+COPY  statements(vat_number,year, month,account,value, input_method)
+FROM 'c:\repos\kpi_dashboard\statements.csv' DELIMITER ';' CSV HEADER;

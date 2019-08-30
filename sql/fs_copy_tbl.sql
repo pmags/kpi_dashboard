@@ -6,9 +6,9 @@
 -- 2. Only include values that are not included yet on table statements
 -- 3. Insert the query result into the table statements
 
-INSERT INTO statements (account,vat_number,year,month,value)
+INSERT INTO statements (input_method,account,vat_number,year,month,value)
 -- selects all columns from the query result
-SELECT * 
+SELECT 'ledger' AS input_method, *
 FROM (
     -- sums all values based on fs_account (ies code)
     SELECT 
