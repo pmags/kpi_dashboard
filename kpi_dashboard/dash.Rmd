@@ -5,6 +5,7 @@ output:
     logo: www/paper_stack_icon_2.png
     orientation: columns
     vertical_layout: fill
+    #css: www/my_theme.css
     theme: cerulean
 runtime: shiny
 ---
@@ -14,10 +15,12 @@ runtime: shiny
 library(flexdashboard)
 library(tidyverse)
 library(lubridate)
-library(RPostgreSQL) # connects to database
+library(RPostgres) # connects to database
+library(RPostgreSQL) # sql functions
 library(plotly) # allows for web friendly graphs
 library(DT) # allows for web friendly data table
 library(viridis) # plot color
+library(shinysky)
 
 # Theme set for all plots
 theme_set(
@@ -29,18 +32,18 @@ theme_set(
 
 ```{r connection to database, include = FALSE}
 
-db <- dbConnect(drv = "PostgreSQL", 
-                 dbname = "nors",
-                 host = "localhost",
-                 port = 5432,
-                 user = "psm",
-                 password = "admin")
+con <- dbConnect(RPostgres::Postgres(), 
+                dbname = "nors",
+                host = "localhost",
+                port = 5432,
+                user = "psm",
+                password = "admin")
 
 ```
 
 ```{r}
 
-data <- reactive({dbGetQuery(db,sqlInterpolate(ANSI(),
+data <- reactive({dbGetQuery(con,sqlInterpolate(ANSI(),
                                 "SELECT
                                   vat_number, account,year,month,value
                                 FROM
@@ -49,18 +52,9 @@ data <- reactive({dbGetQuery(db,sqlInterpolate(ANSI(),
                                     FROM
                                         statements
                                     WHERE
-                                        account LIKE 'A00126'OR
-                                        account LIKE 'A00139'OR
-                                        account LIKE 'A00156'OR
-                                        account LIKE 'A00125'OR
-                                        account LIKE 'A00149'OR
-                                        account LIKE 'A00141'OR
-                                        account LIKE 'A00124'OR
-                                        account LIKE 'A00018'OR
-                                        account LIKE 'A00127'OR
-                                        account LIKE 'A00131'OR
-                                        account LIKE 'A00001'OR
-                                        account LIKE 'A00006'
+                                       account IN ('A00126','A00139','A00156',
+                                       'A00125','A00149','A00141','A00124',
+                                       'A00018','A00127','A00131','A00001','A00006')
                                     ) AS t
                                 WHERE
                                   vat_number = ?vat;",
@@ -81,13 +75,15 @@ data <- reactive({dbGetQuery(db,sqlInterpolate(ANSI(),
     select(date,everything()) %>%
     arrange(desc(date))})
 
+
 ```
 
 Sidebar {.sidebar}
 ====================
 
 ```{r}
-company <- dbGetQuery(db,"SELECT vat_number, name FROM company;")
+
+company <- dbGetQuery(con,"SELECT vat_number, name FROM company;")
 Encoding(company$name) <- "UTF-8"
 
 choices <- split(company$vat_number,company$name)
@@ -109,7 +105,6 @@ Column {data-width=333}
 ### Autonomia financeira
 
 ```{r}
-
 renderPlotly(
   data() %>%
   ggplot(aes(x = date, y = abs(kpi0001), group = 1)) +
@@ -248,21 +243,23 @@ Financials
 
 ```{r}
 
-query <- "SELECT vat_number,account,name_pt, year, month,value, financial_statement
-FROM statements AS s
-INNER JOIN account AS a 
-ON s.account = a.ies_id 
-WHERE vat_number = 513259236;"
-df <- dbGetQuery(db,query)
+query_sql <- "SELECT vat_number,account,name_pt, year, month,value, financial_statement
+                FROM statements AS s
+                INNER JOIN account AS a
+                ON s.account = a.ies_id
+                WHERE vat_number = ?vat;"
 
-df <- df %>% 
-  mutate(date = paste0(month,"-",year)) %>% 
-  select(-year, -month,-vat_number) %>% 
-  spread(date, value) %>% 
-  select(rubrica = name_pt, everything())
+df <- reactive({
+  dbGetQuery(con,sqlInterpolate(ANSI(), query_sql, vat = input$company_select)) %>%
+    mutate(date = ymd(paste0(year,"-",month,"-01"))) %>%
+    arrange(desc(date)) %>% 
+    select(-year, -month,-vat_number) %>%
+    spread(date, value) %>%
+    select(rubrica = name_pt, everything())
+})
 
-Encoding(df$rubrica) <- "UTF-8"
-  
+
+
 ```
 
 
@@ -273,9 +270,10 @@ Column {.tabset}
 
 ```{r}
 
-df %>% 
+renderDataTable(
+  df() %>%
   filter(financial_statement == "bs") %>%
-  select(-financial_statement) %>% 
+  select(-financial_statement) %>%
   DT::datatable(
   #rownames = FALSE,
   extensions = "Buttons",
@@ -289,14 +287,16 @@ df %>%
        "function(settings, json) {",
         "$(this.api().table().header()).css({'font-size': '9pt'});",
         "}"
-    )), 
-  fillContainer = TRUE) %>% 
-  DT::formatStyle(colnames(select(df,-financial_statement)), fontSize = "9pt") %>%
+    )),
+  fillContainer = TRUE) %>%
+  DT::formatStyle(colnames(select(df(),-financial_statement)), fontSize = "9pt") %>%
   DT::formatStyle("account",
-                  target = "row", 
+                  target = "row",
                   fontWeight = styleEqual(c("A00112","A00125","A00126","A00136","A00139","A00145","A00156","A00157","A00158"),
-                                          c("bold","bold","bold","bold","bold","bold","bold","bold","bold"))) %>% 
-  DT::formatRound(columns = colnames(select(df,-financial_statement,-rubrica,-account)), digits = 0, mark = ".") 
+                                          c("bold","bold","bold","bold","bold","bold","bold","bold","bold"))) %>%
+  DT::formatRound(columns = colnames(select(df(),-financial_statement,-rubrica,-account)), digits = 0, mark = ".")
+
+)
 
 ```
 
@@ -304,7 +304,9 @@ df %>%
 
 ```{r}
 
-df %>% 
+renderDataTable(
+  
+  df() %>% 
   filter(financial_statement == "pl") %>%
   select(-financial_statement) %>% 
   DT::datatable(
@@ -322,17 +324,25 @@ df %>%
         "}"
     )), 
   fillContainer = TRUE) %>% 
-  DT::formatStyle(colnames(select(df,-financial_statement)), fontSize = "9pt") %>%
+  DT::formatStyle(colnames(select(df(),-financial_statement)), fontSize = "9pt") %>%
   DT::formatStyle("account",
                   target = "row", 
                   fontWeight = styleEqual(c("A00018","A00021","A00024","A00026"),
                                           c("bold","bold","bold","bold"))) %>% 
-  DT::formatRound(columns = colnames(select(df,-financial_statement,-rubrica,-account)), digits = 0, mark = ".") 
+  DT::formatRound(columns = colnames(select(df(),-financial_statement,-rubrica,-account)), digits = 0, mark = ".")
+  
+  )
 
 ```
 
 Liquidity {data-navmenu=Details}
 =======================================================================
+
+### char
+
+```{r}
+
+```
 
 
 Market
