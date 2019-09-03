@@ -1,5 +1,5 @@
 
-SELECT *
+SELECT funcional_code, name_pt, vat_number, year, month, value
 FROM(
 
     SELECT funcional_code, vat_number, year, month, SUM(value) AS value

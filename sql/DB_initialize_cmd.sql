@@ -50,6 +50,7 @@ CREATE TABLE account (
   financial_statement VARCHAR(5),
   current_nonCurrent VARCHAR(2),
   asset_liability_equity VARCHAR(2),
+  funcional_code VARCHAR(25),
   ebitda BOOLEAN,
   ebit BOOLEAN,
   ebt BOOLEAN,
@@ -68,6 +69,30 @@ CREATE TABLE account (
     COMMENT ON COLUMN account.sum_value IS 'TRUE se o valor em causa resultar do somatório de outros valores';
 
 
+-- Information regarding funtional balance sheet
+CREATE TABLE funcional_account (
+  funcional_code VARCHAR(25) NOT NULL,
+  name_pt TEXT NOT NULL,
+  name_en TEXT,
+  fmf BOOLEAN,
+  c_needs BOOLEAN,
+  c_resources BOOLEAN,
+  nfm BOOLEAN,
+  tl BOOLEAN,
+  sum_value BOOLEAN,
+  UNIQUE(funcional_code),
+  PRIMARY KEY (funcional_code)
+);
+    -- Adds comments to table for future use
+    COMMENT ON COLUMN funcional_account.funcional_code IS 'Código de identificação de cada rubrica do balanço funcional';
+    COMMENT ON COLUMN funcional_account.name_pt IS 'Nome da rubrica em protuguês';
+    COMMENT ON COLUMN funcional_account.name_en IS 'Nome da rubrica em inglês';
+    COMMENT ON COLUMN funcional_account.fmf IS 'Fundo de Maneio Funcional';
+    COMMENT ON COLUMN funcional_account.c_needs IS 'Necessidades ciclicas';
+    COMMENT ON COLUMN funcional_account.c_resources IS 'Recursos ciclicos';
+    COMMENT ON COLUMN funcional_account.nfm IS 'Necessidades de fundo de maneio';
+    COMMENT ON COLUMN funcional_account.tl IS 'Tesouraria Liquida';
+    COMMENT ON COLUMN funcional_account.sum_value IS 'TRUE se a rubrica for um somatório';
 
 -- Creates table that will connect ledger to financial statement accounts
 CREATE TABLE account_chart (
@@ -134,5 +159,15 @@ ALTER TABLE account_chart ADD
   CONSTRAINT account_chart_ies_fkey
   FOREIGN KEY (fs_account)
   REFERENCES account (ies_id)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
+
+-- 3.6. ONE funcional account can be compose by MULTIPLE financial accounts
+-- but each financial account can only be associated with one funcional account
+
+ALTER TABLE account ADD
+  CONSTRAINT funcional_account_fkey
+  FOREIGN KEY (funcional_code)
+  REFERENCES funcional_account (funcional_code)
   ON DELETE CASCADE
   ON UPDATE CASCADE;

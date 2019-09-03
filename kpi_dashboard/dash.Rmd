@@ -1,13 +1,15 @@
 ---
 title: "Dash"
+runtime: shiny
 output: 
   flexdashboard::flex_dashboard:
     logo: www/paper_stack_icon_2.png
-    orientation: columns
+    orientation: rows
     vertical_layout: fill
     #css: www/my_theme.css
     theme: cerulean
-runtime: shiny
+    source_code: "https://github.com/pmags/kpi_dashboard"
+
 ---
 
 ```{r setup, include=FALSE}
@@ -21,6 +23,8 @@ library(plotly) # allows for web friendly graphs
 library(DT) # allows for web friendly data table
 library(viridis) # plot color
 library(shinysky)
+
+source("R/functions.R")
 
 # Theme set for all plots
 theme_set(
@@ -52,23 +56,23 @@ data <- reactive({dbGetQuery(con,sqlInterpolate(ANSI(),
                                     FROM
                                         statements
                                     WHERE
-                                       account IN ('A00126','A00139','A00156',
-                                       'A00125','A00149','A00141','A00124',
-                                       'A00018','A00127','A00131','A00001','A00006')
+                                       account IN (
+                                       'A00139','A00125', 'A00124','A00119','A00117','A00151','A00149',
+                                       'A00126','A00127','A00131','A00156','A00018','A00001','A00006')
                                     ) AS t
                                 WHERE
                                   vat_number = ?vat;",
                                 vat = input$company_select)) %>%
     spread(account,value) %>%
+    replace(., is.na(.),0) %>%   
     mutate(
-      kpi0001 = A00139/A00126,
-      kpi0002 = (A00125 - A00156)/1000,
-      kpi0003 = A00125/A00156,
-      kpi0004 = (A00149 + A00141 - A00124)/A00018,
+      kpi0001 = ((A00125 - A00124 - A00119 - A00117) + (A00156 - A00151 - A00149))/-A00001 * 365,
       kpi0005 = A00139/A00127,
       kpi0006 = A00131/A00127,
-      kpi0007 = (A00001-A00006)/A00001,
-      kpi0008 = A00018/A00001
+      kpi0007 = (A00001+A00006)/A00001,
+      kpi0008 = A00018/A00001,
+      kpi0009 = A00018/(A00126-A00156),
+      wc = (A00125 - A00124 - A00119 - A00117) + (A00156 - A00151 - A00149)
       ) %>%
     mutate(date = ymd(paste0(year,"-",month,"-01"))) %>%
     select(-vat_number, -year, -month) %>%
@@ -77,6 +81,66 @@ data <- reactive({dbGetQuery(con,sqlInterpolate(ANSI(),
 
 
 ```
+
+```{r}
+# temp
+# 
+# data <- dbGetQuery(con,sqlInterpolate(ANSI(),
+#                                 "SELECT
+#                                   vat_number, account,year,month,value
+#                                 FROM
+#                                   ( SELECT
+#                                         vat_number, account,year,month,value
+#                                     FROM
+#                                         statements
+#                                     WHERE
+#                                        account IN (
+#                                        'A00139','A00125', 'A00124','A00119','A00117','A00151','A00149',
+#                                        'A00126','A00127','A00131','A00156','A00018','A00001','A00006')
+#                                     ) AS t
+#                                 WHERE
+#                                   vat_number = 513259236;")) %>%
+# 
+#     spread(account,value) %>%
+#   replace(., is.na(.),0) %>%
+#   mutate(
+#       kpi0001 = ((A00125 - A00124 - A00119 - A00117) + (A00156 - A00151 - A00149))/-A00001 * 365,
+#       kpi0005 = A00139/A00127,
+#       kpi0006 = A00131/A00127,
+#       kpi0007 = (A00001+A00006)/A00001,
+#       kpi0008 = A00018/A00001,
+#       kpi0009 = A00018/(A00126-A00156),
+#       wc = (A00125 - A00124 - A00119 - A00117) + (A00156 - A00151 - A00149)
+#       ) %>%
+#     mutate(date = ymd(paste0(year,"-",month,"-01"))) %>%
+#     select(-vat_number, -year, -month) %>%
+#     select(date,everything()) %>%
+#     arrange(desc(date))
+
+
+
+
+
+ 
+
+
+#
+# data %>% 
+#   select(date, contains("kpi")) %>% 
+#   gather("kpi","value",contains("kpi")) %>% 
+#   mutate(kpi = factor(kpi)) %>% 
+#   filter(kpi %in% c("kpi0009","kpi0008","kpi0007")) %>% 
+#   mutate(kpi = forcats::fct_recode(roce = "kpi0007")) %>% 
+#   ggplot(aes(x = date, y = value, group = kpi)) + 
+#   geom_line(aes(color = kpi))+
+#   geom_point(aes(color=kpi)) +
+#   scale_color_brewer(palette="Dark2")+
+#   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+#   labs( x="",y = "") +
+#   theme(legend.position="top") +
+#   scale_colour_discrete(breaks = c("kpi0008","kpi0007"),labels = c("Gross Margin", "Ebitda Margin"))
+```
+
 
 Sidebar {.sidebar}
 ====================
@@ -91,120 +155,115 @@ choices <- split(company$vat_number,company$name)
 div(style = "font-size:9pt",
     selectInput("company_select", h5("Select company"), 
                        choices = choices, selected = "Galius"))
-
-
 ```
+
+
+
+Use the __Explore metros__ tab to explore neighborhood diversity for your chosen metropolitan area in 2010.  The red line on the scatterplot represents a locally-weighted estimate of how diversity varies in the metropolitan area by distance from its urban core or cores.  Click and drag on the scatterplot to highlight the corresponding Census tracts on the map below, and click on a Census tract on the map to generate a chart of race and ethnicity counts.  
+
+Click the __Compare over time__ tab to examine how locally-weighted estimates of neighborhood diversity by distance from the urban core has varied between the 1990, 2000, and 2010 Censuses, and view maps of these shifts over time. To learn more about the project, click the __About__ tab.  
+
+Application author: [Kyle Walker](http://personal.tcu.edu/kylewalker), [Texas Christian University](http://www.tcu.edu)
 
 
 Overview
 =======================================================================
 
-Column {data-width=333}
+Row {data-width = 500}
 -----------------------------------------------------------------------
 
-### Autonomia financeira
+### Performance
 
 ```{r}
 renderPlotly(
-  data() %>%
-  ggplot(aes(x = date, y = abs(kpi0001), group = 1)) +
-  geom_line(color =  "orange") +
-  geom_point(color =  "orange") +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  labs( x="",y = ""))
-
-```
-
-### Fundo de maneio
-
-```{r}
-
-renderPlotly(
+  
   data() %>% 
-  filter(month(date) == 12) %>%
-  ggplot(aes(x = date, y = abs(kpi0002), group = 1)) +
-  geom_line(color =  "orange") +
-  geom_point(color =  "orange") +
-  labs( x="",y = "")
+  select(date, contains("kpi")) %>% 
+  gather("kpi","value",contains("kpi")) %>% 
+  mutate(kpi = factor(kpi)) %>% 
+  filter(kpi %in% c("kpi0009","kpi0008","kpi0007")) %>% 
+  mutate(kpi = forcats::fct_recode(kpi, "ROCE (%)" = "kpi0009", "Ebitda (%)" = "kpi0008", "Gross Margin (%)" = "kpi0007")) %>% 
+  ggplot(aes(x = date, y = value, group = kpi)) + 
+  geom_line(aes(color = kpi))+
+  geom_point(aes(color = kpi)) +
+  scale_color_brewer(palette="Dark2")+
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  labs( x="",y = "") +
+  theme(legend.position="top")
   )
 
 ```
 
-### Liquidez geral
 
-```{r}
-
-renderPlotly(
-  data() %>% 
-  filter(month(date) == 12) %>%
-  ggplot(aes(x = date, y = abs(kpi0003), group = 1)) +
-  geom_line(color =  "orange") +
-  geom_point(color =  "orange") +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  labs( x="",y = "")
-  )
-
-```
 
 Column {data-width=333}
 -----------------------------------------------------------------------
 
-### Chart B
-
-```{r}
-
-```
-
-### Margem bruta
+### Turnover 
 
 ```{r}
 
 renderPlotly(
   data() %>% 
-  filter(month(date) == 12) %>% 
-  ggplot(aes(x = date, y = abs(kpi0007), group = 1)) +
-  geom_line(color =  "orange") +
-  geom_point(color =  "orange") +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  labs( x="",y = "")
+    select(date,turnover = A00001) %>% 
+    mutate(month = month(date), 
+           turnover = abs(turnover/month*12)) %>% 
+    ggplot(aes(x = date, y = turnover)) +
+    geom_area(fill="#69b3a2", alpha=0.4) +
+    geom_line(color="#69b3a2") +
+    geom_point(size = 0.5, color="#69b3a2") +
+    scale_y_continuous(labels = ks) +
+    labs( x="",y = "")
 )
 
 ```
 
-### Margem Ebitda
+> Anualized values
+
+### Working capital
 
 ```{r}
 
 renderPlotly(
   data() %>% 
-  filter(month(date) == 12) %>%
-  ggplot(aes(x = date, y = abs(kpi0008), group = 1)) +
-  geom_line(color =  "orange") +
-  geom_point(color =  "orange") +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  labs( x="",y = "")
-
+    select(date, working_capital_days = kpi0001, turnover = A00001) %>% 
+    mutate(working_capital_days = ifelse(month(date) != 12, 
+                                         working_capital_days * turnover/(turnover/month(date)*12), working_capital_days)) %>% 
+    ggplot(aes(x = date, y = working_capital_days)) +
+    geom_area(fill="#7a69b3", alpha = 0.4) +
+    geom_line(color="#7a69b3") +
+    geom_point(size = 0.5, color="#7a69b3") +
+    labs( x="",y = "")
 )
 
 ```
+
+> Values in days. Interimn sales converted to yearly values.
+
+### Cash Flow % Sales
+
+```{r}
+
+renderPlotly(
+  
+  data() %>% 
+    mutate(bf = date - years(1)) %>% 
+    left_join(select(data(),date, wc), by = c("bf" = "date"), suffix = c(".curr",".bf")) %>% 
+    mutate(wc_var = wc.curr - wc.bf, 
+           cf_vendas = (A00018 + wc_var)/A00001*100) %>% 
+     ggplot(aes(x = date, y = cf_vendas)) +
+    geom_area(fill="#d95b5b", alpha = 0.4) +
+    geom_line(color="#d95b5b") +
+    geom_point(size = 0.5, color="#d95b5b") +
+    labs( x="",y = "")
+)
+
+
+```
+
 
 Column {data-width=333}
 -----------------------------------------------------------------------
-
-### Net Debt to Ebitda
-
-```{r}
-
-renderPlotly(
-  plot <- data() %>% 
-  filter(month(date) == 12) %>%
-  ggplot(aes(x = date, y = abs(kpi0004), group = 1)) +
-  geom_line(color =  "orange") +
-  geom_point(color =  "orange") +
-  labs( x="",y = "")
-)
-
-```
 
 ### Monitorização art 35º
 
@@ -258,8 +317,6 @@ df <- reactive({
     select(rubrica = name_pt, everything())
 })
 
-
-
 ```
 
 
@@ -275,7 +332,7 @@ renderDataTable(
   filter(financial_statement == "bs") %>%
   select(-financial_statement) %>%
   DT::datatable(
-  #rownames = FALSE,
+  rownames = FALSE,
   extensions = "Buttons",
   options = list(
     # adds buttons
@@ -335,10 +392,148 @@ renderDataTable(
 
 ```
 
-Liquidity {data-navmenu=Details}
+Liquidity & Solvency {data-orientation=columns data-navmenu=Details}
 =======================================================================
 
-### char
+```{r}
+query2 <- "
+SELECT funcional_code, name_pt, vat_number, year, month, value
+FROM(
+
+    SELECT funcional_code, vat_number, year, month, SUM(value) AS value
+    FROM statements AS s
+    INNER JOIN account AS a ON a.ies_id = s.account
+    WHERE a.sum_value != true AND
+        funcional_code IS NOT NULL
+    GROUP BY funcional_code, vat_number, year, month
+
+    UNION
+
+    SELECT 'F0005' AS funcional_code, vat_number, year, month, SUM(value) AS value
+    FROM statements AS s
+    INNER JOIN account AS a ON a.ies_id = s.account
+    INNER JOIN funcional_account AS f USING (funcional_code)
+    WHERE a.sum_value != true AND
+        f.fmf = true AND
+        f.funcional_code IS NOT NULL
+    GROUP BY vat_number, year, month
+
+    UNION
+
+    SELECT 'F0011' AS funcional_code, vat_number, year, month, SUM(value) AS value
+    FROM statements AS s
+    INNER JOIN account AS a ON a.ies_id = s.account
+    INNER JOIN funcional_account AS f USING (funcional_code)
+    WHERE a.sum_value != true AND
+        f.c_needs = true AND
+        f.funcional_code IS NOT NULL
+    GROUP BY vat_number, year, month
+
+    UNION   
+
+    SELECT 'F0016' AS funcional_code, vat_number, year, month, SUM(value) AS value
+    FROM statements AS s
+    INNER JOIN account AS a ON a.ies_id = s.account
+    INNER JOIN funcional_account AS f USING (funcional_code)
+    WHERE a.sum_value != true AND
+        f.c_resources = true AND
+        f.funcional_code IS NOT NULL
+    GROUP BY vat_number, year, month
+
+    UNION
+
+    SELECT 'F0017' AS funcional_code, vat_number, year, month, SUM(value) AS value
+    FROM statements AS s
+    INNER JOIN account AS a ON a.ies_id = s.account
+    INNER JOIN funcional_account AS f USING (funcional_code)
+    WHERE a.sum_value != true AND
+        f.nfm = true AND
+        f.funcional_code IS NOT NULL
+    GROUP BY vat_number, year, month
+
+    UNION
+
+    SELECT 'F0020' AS funcional_code, vat_number, year, month, SUM(value) AS value
+    FROM statements AS s
+    INNER JOIN account AS a ON a.ies_id = s.account
+    INNER JOIN funcional_account AS f USING (funcional_code)
+    WHERE a.sum_value != true AND
+        f.tl = true AND
+        f.funcional_code IS NOT NULL
+    GROUP BY vat_number, year, month
+
+) AS data
+LEFT JOIN funcional_account USING (funcional_code)
+WHERE vat_number = 505455668;"
+
+
+fun_bal <-  dbGetQuery(con,sqlInterpolate(ANSI(), query2)) %>%
+    mutate(date = ymd(paste0(year,"-",month,"-01"))) %>%
+    arrange(desc(date)) %>% 
+    select(-year, -month,-vat_number) %>%
+    spread(date, value) %>%
+    select(rubrica = name_pt, everything())
+
+
+```
+
+Column {data-width=600}
+-----------------------------------------------------------------------
+
+### Funcional balance sheet
+
+```{r}
+renderDataTable(
+  
+  fun_bal %>% 
+  DT::datatable(
+  rownames = FALSE,
+  extensions = "Buttons",
+  options = list(
+    # adds buttons
+    dom = 'Bfrtip',
+    buttons = c("copy", "csv", "excel","pdf","print"),
+    # number of entries on display
+    pageLength = 100,
+    initComplete = JS(
+       "function(settings, json) {",
+        "$(this.api().table().header()).css({'font-size': '8pt'});",
+        "}"
+    )), 
+  fillContainer = TRUE) %>% 
+  DT::formatStyle(colnames(fun_bal), fontSize = "8pt") %>%
+  DT::formatStyle("funcional_code",
+                  target = "row", 
+                  fontWeight = styleEqual(c("F0005","F0011","F0016","F0017","F0020"),
+                                          c("bold","bold","bold","bold","bold"))) %>% 
+  DT::formatRound(columns = colnames(select(fun_bal,-rubrica,-funcional_code)), digits = 0, mark = ".")
+  
+  )
+
+```
+
+
+Column 
+-----------------------------------------------------------------------
+
+### Cash generation
+
+
+```{r}
+
+```
+
+> Cash converstion cycle and Working Capital in days
+
+### Liquidity
+
+```{r}
+
+```
+
+> Current ratio, Quick Ratio, Acid test ratio
+
+### Debt
 
 ```{r}
 
@@ -347,4 +542,9 @@ Liquidity {data-navmenu=Details}
 
 Market
 =======================================================================
+
+
+
+
+
 

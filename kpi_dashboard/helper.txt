@@ -1,0 +1,27 @@
+Dívidas de terceiros de MLP (Activo circulante) - transferir para Activo Fixo. 
+Adiantamentos a fornecedores de imobilizado (Activo circulante) - transferir para Activo Fixo 
+Letras descontadas não vencidas (Fora do balanço) - Repor em «clientes» e por contrapartida «empréstimos bancários curto prazo, Considera-se Activo Fixo e Tesouraria Passiva. 
+Clientes em factoring (Fora do Balanço) - Repor em «clientes» e por contrapartida «empréstimos bancários curto prazo, considerar Activo Fixo e Tesouraria Passiva. 
+Subscritores de Capital (Activo circulante) - Deduzir por contrapartida do capital social, considera-se menos Tesouraria Activa e Capital Próprio. 
+IRC (Activo Circulante) - Os pagamentos por conta deveriam estar a deduzir ao Estado, considera-se menos Tesouraria Activa e Passiva. 
+IVA a recuperar de Exploração (Activo Circulante) - considerar Necessidade Ciclica. 
+IVA a recuperar de Investimentos (Activo circulante) - Se for pedido o reembolso do IVA, considerar Tesouraria Activa. 
+Outras situações e outros impostos (Activo Circulante) - Consoante o prazo previsto de recuperação, considera-se Activo Fixo ou Tesouraria Activa. 
+Custos diferidos: 
+- relacionados com FSE (Acréscimos e diferimentos) - referentes à Exploração, considera-se Necessidade Cíclica. 
+- relacionados com juros, câmbios, etc. (Acréscimos e diferimentos) - não é operacional mas financeiro (se for de curto prazo), considera-se Tesouraria Activa. 
+- relacionados com imobilizações em curso (Acréscimos e diferimentos) - trata-se de MLP, considera-se Activo Fixo. 
+Acréscimos de proveitos: 
+- relacionados com Vendas e Clientes (Acréscimos e diferimentos) - referentes à Exploração, considera-se Necessidade Cíclica. 
+- relacionados com juros (Acréscimos e diferimentos) - não é operacional mas financeiro (se for de curto prazo), considera-se Tesouraria Activa. 
+- Resultados Líquidos (Capital Próprio) - quando há distribuição de dividendos, são uma dívida aos accionistas no curto prazo, considera-se Tesouraria Passiva. 
+- Provisões para riscos e encargos - Em geral são um dívida considera-se Tesouraria Passiva mas por vezes tem características de reservas, neste caso considera-se Capital Permanente. 
+- Adiantamentos por conta de vendas (Passivo de Curto Prazo) - trata-se de uma adiantamento de clientes, considera-se Recurso Ciclico. 
+- Fornecedores em mora (Passivo de Curto Prazo) - deixam de fazer parte dos recursos ciclicos, considera-se Tesouraria Passiva. 
+- Estado e Outros Entes públicos em mora (Passivo de Curto Prazo) - deixam de fazer parte dos recursos ciclicos, considera-se Tesouraria Passiva. 
+- Acréscimos de custos: 
+- Relacionados com FSE e Pessoal (Acréscimos e diferimentos) - referentes à Exploração, considera-se Recurso Cíclico. 
+- Relacionados com juros (Acréscimos e diferimentos) - não é operacional mas financeiro, considera-se Tesouraria Passiva. 
+- Proveitos diferidos: 
+- Relacionados com vendas (Acréscimos e diferimentos) - vendas ainda não entregues.É como um adiantamento do cliente, considera-se Recurso Cíclico. 
+- Relacionados com juros, câmbios, etc. (Acréscimos e diferimentos) - não é operacional mas financeiro (se for de curto prazo), considera-se Tesouraria Passiva. 
