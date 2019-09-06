@@ -384,7 +384,7 @@ FROM(
 
     UNION
 
-    SELECT 'CF003' AS cf_code, vat_number, year, month, SUM(var) AS value
+    SELECT 'CF002' AS cf_code, vat_number, year, month, SUM(var) AS value
     FROM (
         SELECT vat_number, account, month, year, 
             value - lag(value) OVER (PARTITION BY account, vat_number ORDER BY year, month) AS var
@@ -408,7 +408,7 @@ FROM(
 
     UNION
 
-    SELECT 'CF007' AS cf_code, vat_number, year, month, SUM(var) AS value
+    SELECT 'CF006' AS cf_code, vat_number, year, month, SUM(var) AS value
     FROM (
         SELECT vat_number, account, month, year, 
             value - lag(value) OVER (PARTITION BY account, vat_number ORDER BY year, month) AS var
@@ -432,7 +432,7 @@ FROM(
 
     UNION
 
-    SELECT 'CF008' AS cf_code, vat_number, year, month, SUM(var) AS value
+    SELECT 'CF007' AS cf_code, vat_number, year, month, SUM(var) AS value
     FROM (
         SELECT vat_number, account, month, year, 
             value - lag(value) OVER (PARTITION BY account, vat_number ORDER BY year, month) AS var
@@ -456,7 +456,7 @@ FROM(
 
     UNION
 
-    SELECT 'CF013' AS cf_code, vat_number, year, month, SUM(var) AS value
+    SELECT 'CF012' AS cf_code, vat_number, year, month, SUM(var) AS value
     FROM (
         SELECT vat_number, account, month, year, 
             value - lag(value) OVER (PARTITION BY account, vat_number ORDER BY year, month) AS var
@@ -480,7 +480,7 @@ FROM(
 
     UNION
 
-    SELECT 'CF019' AS cf_code, vat_number, year, month, SUM(var) AS value
+    SELECT 'CF018' AS cf_code, vat_number, year, month, SUM(var) AS value
     FROM (
         SELECT vat_number, account, month, year, 
             value - lag(value) OVER (PARTITION BY account, vat_number ORDER BY year, month) AS var
@@ -504,7 +504,7 @@ FROM(
 
     UNION
 
-    SELECT 'CF020' AS cf_code, vat_number, year, month, SUM(var) AS value
+    SELECT 'CF019' AS cf_code, vat_number, year, month, SUM(var) AS value
     FROM (
         SELECT vat_number, account, month, year, 
             value - lag(value) OVER (PARTITION BY account, vat_number ORDER BY year, month) AS var
@@ -514,14 +514,14 @@ FROM(
 
         UNION
 
-        SELECT vat_number, account, month, year, value AS var 
+        SELECT vat_number, account, month, year, value * (CASE WHEN account LIKE 'A00026' THEN -1 ELSE 1 END) AS va
         FROM statements AS s
         INNER JOIN account AS a ON s.account = a.ies_id
         WHERE financial_statement = 'pl'
     ) AS var
     INNER JOIN account AS a ON a.ies_id = var.account
     INNER JOIN cashflow_account AS cf USING (cf_code)
-    WHERE a.sum_value != true AND
+    WHERE 
         cf.cf_liquido_tesouraria = true AND
         cf.cf_code IS NOT NULL
     GROUP BY vat_number, year, month
