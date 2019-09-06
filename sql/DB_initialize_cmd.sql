@@ -51,6 +51,7 @@ CREATE TABLE account (
   current_nonCurrent VARCHAR(2),
   asset_liability_equity VARCHAR(2),
   funcional_code VARCHAR(25),
+  cf_code VARCHAR(25),
   ebitda BOOLEAN,
   ebit BOOLEAN,
   ebt BOOLEAN,
@@ -93,6 +94,24 @@ CREATE TABLE funcional_account (
     COMMENT ON COLUMN funcional_account.nfm IS 'Necessidades de fundo de maneio';
     COMMENT ON COLUMN funcional_account.tl IS 'Tesouraria Liquida';
     COMMENT ON COLUMN funcional_account.sum_value IS 'TRUE se a rubrica for um somatório';
+
+
+-- Information regarding cash flow sheet
+CREATE TABLE cashflow_account (
+  cf_code VARCHAR(25) NOT NULL,
+  name_pt TEXT NOT NULL,
+  name_en TEXT,
+  cf_economico BOOLEAN,
+  cf_corrente BOOLEAN,
+  cf_operacional BOOLEAN,
+  cf_gerado_tesouraria BOOLEAN,
+  cf_financiamento BOOLEAN,
+  cf_liquido_tesouraria BOOLEAN,
+  cf_aplicacoes BOOLEAN,
+  sum_value BOOLEAN,
+  UNIQUE(cf_code),
+  PRIMARY KEY (cf_code)
+);
 
 -- Creates table that will connect ledger to financial statement accounts
 CREATE TABLE account_chart (
@@ -169,5 +188,15 @@ ALTER TABLE account ADD
   CONSTRAINT funcional_account_fkey
   FOREIGN KEY (funcional_code)
   REFERENCES funcional_account (funcional_code)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
+
+-- 3.6. ONE cfaccount can be compose by MULTIPLE financial accounts
+-- but each financial account can only be associated with one cf account
+
+ALTER TABLE account ADD
+  CONSTRAINT cf_account_fkey
+  FOREIGN KEY (cf_code)
+  REFERENCES cashflow_account (cf_code)
   ON DELETE CASCADE
   ON UPDATE CASCADE;

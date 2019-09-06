@@ -82,66 +82,6 @@ data <- reactive({dbGetQuery(con,sqlInterpolate(ANSI(),
 
 ```
 
-```{r}
-# temp
-# 
-# data <- dbGetQuery(con,sqlInterpolate(ANSI(),
-#                                 "SELECT
-#                                   vat_number, account,year,month,value
-#                                 FROM
-#                                   ( SELECT
-#                                         vat_number, account,year,month,value
-#                                     FROM
-#                                         statements
-#                                     WHERE
-#                                        account IN (
-#                                        'A00139','A00125', 'A00124','A00119','A00117','A00151','A00149',
-#                                        'A00126','A00127','A00131','A00156','A00018','A00001','A00006')
-#                                     ) AS t
-#                                 WHERE
-#                                   vat_number = 513259236;")) %>%
-# 
-#     spread(account,value) %>%
-#   replace(., is.na(.),0) %>%
-#   mutate(
-#       kpi0001 = ((A00125 - A00124 - A00119 - A00117) + (A00156 - A00151 - A00149))/-A00001 * 365,
-#       kpi0005 = A00139/A00127,
-#       kpi0006 = A00131/A00127,
-#       kpi0007 = (A00001+A00006)/A00001,
-#       kpi0008 = A00018/A00001,
-#       kpi0009 = A00018/(A00126-A00156),
-#       wc = (A00125 - A00124 - A00119 - A00117) + (A00156 - A00151 - A00149)
-#       ) %>%
-#     mutate(date = ymd(paste0(year,"-",month,"-01"))) %>%
-#     select(-vat_number, -year, -month) %>%
-#     select(date,everything()) %>%
-#     arrange(desc(date))
-
-
-
-
-
- 
-
-
-#
-# data %>% 
-#   select(date, contains("kpi")) %>% 
-#   gather("kpi","value",contains("kpi")) %>% 
-#   mutate(kpi = factor(kpi)) %>% 
-#   filter(kpi %in% c("kpi0009","kpi0008","kpi0007")) %>% 
-#   mutate(kpi = forcats::fct_recode(roce = "kpi0007")) %>% 
-#   ggplot(aes(x = date, y = value, group = kpi)) + 
-#   geom_line(aes(color = kpi))+
-#   geom_point(aes(color=kpi)) +
-#   scale_color_brewer(palette="Dark2")+
-#   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-#   labs( x="",y = "") +
-#   theme(legend.position="top") +
-#   scale_colour_discrete(breaks = c("kpi0008","kpi0007"),labels = c("Gross Margin", "Ebitda Margin"))
-```
-
-
 Sidebar {.sidebar}
 ====================
 
@@ -155,16 +95,30 @@ choices <- split(company$vat_number,company$name)
 div(style = "font-size:9pt",
     selectInput("company_select", h5("Select company"), 
                        choices = choices, selected = "Galius"))
+
+div(style = "font-size:9pt",
+     checkboxGroupInput(inputId = "check_period",
+                        label = h5("Periods"),
+                        choices = list("Year End" = 1, "Interimn" = 2), selected = c(1,2))
+    )
+
+div(style = "font-size:9pt",
+    
+    sliderInput(inputId = "year_slider",
+                label = h5("Years included"),
+                min = 2014, max = 2019,
+                value = c(2014,2019))
+     
+    )
+
 ```
 
+Use **Select Company** to change company on the dashboard. The options **Periods** allow to only include year end information as the years represented on the dash board can be changed on **years included**.
+
+Click on **Financials** tab for balance sheet, profit and loss, cash flow and funcional balance sheet. Information can be download to excel, csv and pdf.
 
 
-Use the __Explore metros__ tab to explore neighborhood diversity for your chosen metropolitan area in 2010.  The red line on the scatterplot represents a locally-weighted estimate of how diversity varies in the metropolitan area by distance from its urban core or cores.  Click and drag on the scatterplot to highlight the corresponding Census tracts on the map below, and click on a Census tract on the map to generate a chart of race and ethnicity counts.  
-
-Click the __Compare over time__ tab to examine how locally-weighted estimates of neighborhood diversity by distance from the urban core has varied between the 1990, 2000, and 2010 Censuses, and view maps of these shifts over time. To learn more about the project, click the __About__ tab.  
-
-Application author: [Kyle Walker](http://personal.tcu.edu/kylewalker), [Texas Christian University](http://www.tcu.edu)
-
+Application author: [Mosaic](http://mosaic.pt)
 
 Overview
 =======================================================================
@@ -319,82 +273,6 @@ df <- reactive({
 
 ```
 
-
-Column {.tabset}
------------------------------------------------------------------------
-
-### Balance Sheet
-
-```{r}
-
-renderDataTable(
-  df() %>%
-  filter(financial_statement == "bs") %>%
-  select(-financial_statement) %>%
-  DT::datatable(
-  rownames = FALSE,
-  extensions = "Buttons",
-  options = list(
-    # adds buttons
-    dom = 'Bfrtip',
-    buttons = c("copy", "csv", "excel","pdf","print"),
-    # number of entries on display
-    pageLength = 100,
-    initComplete = JS(
-       "function(settings, json) {",
-        "$(this.api().table().header()).css({'font-size': '9pt'});",
-        "}"
-    )),
-  fillContainer = TRUE) %>%
-  DT::formatStyle(colnames(select(df(),-financial_statement)), fontSize = "9pt") %>%
-  DT::formatStyle("account",
-                  target = "row",
-                  fontWeight = styleEqual(c("A00112","A00125","A00126","A00136","A00139","A00145","A00156","A00157","A00158"),
-                                          c("bold","bold","bold","bold","bold","bold","bold","bold","bold"))) %>%
-  DT::formatRound(columns = colnames(select(df(),-financial_statement,-rubrica,-account)), digits = 0, mark = ".")
-
-)
-
-```
-
-### Profit & Loss
-
-```{r}
-
-renderDataTable(
-  
-  df() %>% 
-  filter(financial_statement == "pl") %>%
-  select(-financial_statement) %>% 
-  DT::datatable(
-  #rownames = FALSE,
-  extensions = "Buttons",
-  options = list(
-    # adds buttons
-    dom = 'Bfrtip',
-    buttons = c("copy", "csv", "excel","pdf","print"),
-    # number of entries on display
-    pageLength = 100,
-    initComplete = JS(
-       "function(settings, json) {",
-        "$(this.api().table().header()).css({'font-size': '9pt'});",
-        "}"
-    )), 
-  fillContainer = TRUE) %>% 
-  DT::formatStyle(colnames(select(df(),-financial_statement)), fontSize = "9pt") %>%
-  DT::formatStyle("account",
-                  target = "row", 
-                  fontWeight = styleEqual(c("A00018","A00021","A00024","A00026"),
-                                          c("bold","bold","bold","bold"))) %>% 
-  DT::formatRound(columns = colnames(select(df(),-financial_statement,-rubrica,-account)), digits = 0, mark = ".")
-  
-  )
-
-```
-
-Liquidity & Solvency {data-orientation=columns data-navmenu=Details}
-=======================================================================
-
 ```{r}
 query2 <- "
 SELECT funcional_code, name_pt, vat_number, year, month, value
@@ -464,28 +342,280 @@ FROM(
 
 ) AS data
 LEFT JOIN funcional_account USING (funcional_code)
-WHERE vat_number = 505455668;"
+WHERE vat_number = ?vat;"
 
 
-fun_bal <-  dbGetQuery(con,sqlInterpolate(ANSI(), query2)) %>%
+fun_bal <- reactive({
+  dbGetQuery(con,sqlInterpolate(ANSI(), query2,vat = input$company_select)) %>%
     mutate(date = ymd(paste0(year,"-",month,"-01"))) %>%
     arrange(desc(date)) %>% 
     select(-year, -month,-vat_number) %>%
     spread(date, value) %>%
     select(rubrica = name_pt, everything())
-
+})
 
 ```
 
-Column {data-width=600}
+```{r}
+query3 <- "
+SELECT cf_code, name_pt, vat_number, year, month, value
+FROM(
+
+    SELECT cf_code, vat_number, year, month, SUM(var) AS value
+    FROM (
+        SELECT vat_number, account, month, year, 
+            value - lag(value) OVER (PARTITION BY account, vat_number ORDER BY year, month) AS var
+        FROM statements AS s
+        INNER JOIN account AS a ON s.account = a.ies_id
+        WHERE financial_statement = 'bs'
+
+        UNION
+
+        SELECT vat_number, account, month, year, value AS var 
+        FROM statements AS s
+        INNER JOIN account AS a ON s.account = a.ies_id
+        WHERE financial_statement = 'pl'
+
+    ) AS var
+    INNER JOIN account AS a ON a.ies_id = var.account
+    WHERE a.sum_value != true AND
+        cf_code IS NOT NULL
+    GROUP BY cf_code, vat_number, year, month
+
+    UNION
+
+    SELECT 'CF003' AS cf_code, vat_number, year, month, SUM(var) AS value
+    FROM (
+        SELECT vat_number, account, month, year, 
+            value - lag(value) OVER (PARTITION BY account, vat_number ORDER BY year, month) AS var
+        FROM statements AS s
+        INNER JOIN account AS a ON s.account = a.ies_id
+        WHERE financial_statement = 'bs'
+
+        UNION
+
+        SELECT vat_number, account, month, year, value AS var 
+        FROM statements AS s
+        INNER JOIN account AS a ON s.account = a.ies_id
+        WHERE financial_statement = 'pl'
+    ) AS var
+    INNER JOIN account AS a ON a.ies_id = var.account
+    INNER JOIN cashflow_account AS cf USING (cf_code)
+    WHERE a.sum_value != true AND
+        cf.cf_economico = true AND
+        cf.cf_code IS NOT NULL
+    GROUP BY vat_number, year, month
+
+    UNION
+
+    SELECT 'CF007' AS cf_code, vat_number, year, month, SUM(var) AS value
+    FROM (
+        SELECT vat_number, account, month, year, 
+            value - lag(value) OVER (PARTITION BY account, vat_number ORDER BY year, month) AS var
+        FROM statements AS s
+        INNER JOIN account AS a ON s.account = a.ies_id
+        WHERE financial_statement = 'bs'
+
+        UNION
+
+        SELECT vat_number, account, month, year, value AS var 
+        FROM statements AS s
+        INNER JOIN account AS a ON s.account = a.ies_id
+        WHERE financial_statement = 'pl'
+    ) AS var
+    INNER JOIN account AS a ON a.ies_id = var.account
+    INNER JOIN cashflow_account AS cf USING (cf_code)
+    WHERE a.sum_value != true AND
+        cf.cf_corrente = true AND
+        cf.cf_code IS NOT NULL
+    GROUP BY vat_number, year, month
+
+    UNION
+
+    SELECT 'CF008' AS cf_code, vat_number, year, month, SUM(var) AS value
+    FROM (
+        SELECT vat_number, account, month, year, 
+            value - lag(value) OVER (PARTITION BY account, vat_number ORDER BY year, month) AS var
+        FROM statements AS s
+        INNER JOIN account AS a ON s.account = a.ies_id
+        WHERE financial_statement = 'bs'
+
+        UNION
+
+        SELECT vat_number, account, month, year, value AS var 
+        FROM statements AS s
+        INNER JOIN account AS a ON s.account = a.ies_id
+        WHERE financial_statement = 'pl'
+    ) AS var
+    INNER JOIN account AS a ON a.ies_id = var.account
+    INNER JOIN cashflow_account AS cf USING (cf_code)
+    WHERE a.sum_value != true AND
+        cf.cf_operacional = true AND
+        cf.cf_code IS NOT NULL
+    GROUP BY vat_number, year, month
+
+    UNION
+
+    SELECT 'CF013' AS cf_code, vat_number, year, month, SUM(var) AS value
+    FROM (
+        SELECT vat_number, account, month, year, 
+            value - lag(value) OVER (PARTITION BY account, vat_number ORDER BY year, month) AS var
+        FROM statements AS s
+        INNER JOIN account AS a ON s.account = a.ies_id
+        WHERE financial_statement = 'bs'
+
+        UNION
+
+        SELECT vat_number, account, month, year, value AS var 
+        FROM statements AS s
+        INNER JOIN account AS a ON s.account = a.ies_id
+        WHERE financial_statement = 'pl'
+    ) AS var
+    INNER JOIN account AS a ON a.ies_id = var.account
+    INNER JOIN cashflow_account AS cf USING (cf_code)
+    WHERE a.sum_value != true AND
+        cf.cf_gerado_tesouraria = true AND
+        cf.cf_code IS NOT NULL
+    GROUP BY vat_number, year, month
+
+    UNION
+
+    SELECT 'CF019' AS cf_code, vat_number, year, month, SUM(var) AS value
+    FROM (
+        SELECT vat_number, account, month, year, 
+            value - lag(value) OVER (PARTITION BY account, vat_number ORDER BY year, month) AS var
+        FROM statements AS s
+        INNER JOIN account AS a ON s.account = a.ies_id
+        WHERE financial_statement = 'bs'
+
+        UNION
+
+        SELECT vat_number, account, month, year, value AS var 
+        FROM statements AS s
+        INNER JOIN account AS a ON s.account = a.ies_id
+        WHERE financial_statement = 'pl'
+    ) AS var
+    INNER JOIN account AS a ON a.ies_id = var.account
+    INNER JOIN cashflow_account AS cf USING (cf_code)
+    WHERE a.sum_value != true AND
+        cf.cf_financiamento = true AND
+        cf.cf_code IS NOT NULL
+    GROUP BY vat_number, year, month
+
+    UNION
+
+    SELECT 'CF020' AS cf_code, vat_number, year, month, SUM(var) AS value
+    FROM (
+        SELECT vat_number, account, month, year, 
+            value - lag(value) OVER (PARTITION BY account, vat_number ORDER BY year, month) AS var
+        FROM statements AS s
+        INNER JOIN account AS a ON s.account = a.ies_id
+        WHERE financial_statement = 'bs'
+
+        UNION
+
+        SELECT vat_number, account, month, year, value AS var 
+        FROM statements AS s
+        INNER JOIN account AS a ON s.account = a.ies_id
+        WHERE financial_statement = 'pl'
+    ) AS var
+    INNER JOIN account AS a ON a.ies_id = var.account
+    INNER JOIN cashflow_account AS cf USING (cf_code)
+    WHERE a.sum_value != true AND
+        cf.cf_liquido_tesouraria = true AND
+        cf.cf_code IS NOT NULL
+    GROUP BY vat_number, year, month
+
+    UNION
+
+    SELECT 'CF024' AS cf_code, vat_number, year, month, SUM(var) AS value
+    FROM (
+        SELECT vat_number, account, month, year, 
+            value - lag(value) OVER (PARTITION BY account, vat_number ORDER BY year, month) AS var
+        FROM statements AS s
+        INNER JOIN account AS a ON s.account = a.ies_id
+        WHERE financial_statement = 'bs'
+
+        UNION
+
+        SELECT vat_number, account, month, year, value AS var 
+        FROM statements AS s
+        INNER JOIN account AS a ON s.account = a.ies_id
+        WHERE financial_statement = 'pl'
+    ) AS var
+    INNER JOIN account AS a ON a.ies_id = var.account
+    INNER JOIN cashflow_account AS cf USING (cf_code)
+    WHERE a.sum_value != true AND
+        cf.cf_aplicacoes = true AND
+        cf.cf_code IS NOT NULL
+    GROUP BY vat_number, year, month
+
+
+) AS data
+LEFT JOIN cashflow_account USING (cf_code)
+WHERE vat_number = ?vat;
+"
+
+
+cf <- reactive({
+  dbGetQuery(con,sqlInterpolate(ANSI(), query3, vat = input$company_select)) %>%
+    mutate(date = ymd(paste0(year,"-",month,"-01"))) %>%
+    arrange(desc(date)) %>% 
+    select(-year, -month,-vat_number) %>%
+    spread(date, value) %>%
+    select(rubrica = name_pt, everything())
+})
+
+```
+
+
+
+Column {.tabset}
 -----------------------------------------------------------------------
 
-### Funcional balance sheet
+### Balance Sheet
 
 ```{r}
+
+renderDataTable(
+  df() %>%
+  filter(financial_statement == "bs") %>%
+  select(-financial_statement) %>%
+  DT::datatable(
+  rownames = FALSE,
+  extensions = "Buttons",
+  options = list(
+    # adds buttons
+    dom = 'Bfrtip',
+    buttons = c("copy", "csv", "excel","pdf","print"),
+    # number of entries on display
+    pageLength = 100,
+    initComplete = JS(
+       "function(settings, json) {",
+        "$(this.api().table().header()).css({'font-size': '8pt'});",
+        "}"
+    )),
+  fillContainer = TRUE) %>%
+  DT::formatStyle(colnames(select(df(),-financial_statement)), fontSize = "8pt") %>%
+  DT::formatStyle("account",
+                  target = "row",
+                  fontWeight = styleEqual(c("A00112","A00125","A00126","A00136","A00139","A00145","A00156","A00157","A00158"),
+                                          c("bold","bold","bold","bold","bold","bold","bold","bold","bold"))) %>%
+  DT::formatRound(columns = colnames(select(df(),-financial_statement,-rubrica,-account)), digits = 0, mark = ".")
+
+)
+
+```
+
+### Profit & Loss
+
+```{r}
+
 renderDataTable(
   
-  fun_bal %>% 
+  df() %>% 
+  filter(financial_statement == "pl") %>%
+  select(-financial_statement) %>% 
   DT::datatable(
   rownames = FALSE,
   extensions = "Buttons",
@@ -501,25 +631,126 @@ renderDataTable(
         "}"
     )), 
   fillContainer = TRUE) %>% 
-  DT::formatStyle(colnames(fun_bal), fontSize = "8pt") %>%
+  DT::formatStyle(colnames(select(df(),-financial_statement)), fontSize = "8pt") %>%
+  DT::formatStyle("account",
+                  target = "row", 
+                  fontWeight = styleEqual(c("A00018","A00021","A00024","A00026"),
+                                          c("bold","bold","bold","bold"))) %>% 
+  DT::formatRound(columns = colnames(select(df(),-financial_statement,-rubrica,-account)), digits = 0, mark = ".")
+  
+  )
+
+```
+
+### Funcional balance sheet
+
+```{r}
+renderDataTable(
+  
+  fun_bal() %>% 
+  DT::datatable(
+  rownames = FALSE,
+  extensions = "Buttons",
+  options = list(
+    # adds buttons
+    dom = 'Bfrtip',
+    buttons = c("copy", "csv", "excel","pdf","print"),
+    # number of entries on display
+    pageLength = 100,
+    initComplete = JS(
+       "function(settings, json) {",
+        "$(this.api().table().header()).css({'font-size': '8pt'});",
+        "}"
+    )), 
+  fillContainer = TRUE) %>% 
+  DT::formatStyle(colnames(fun_bal()), fontSize = "8pt") %>%
   DT::formatStyle("funcional_code",
                   target = "row", 
                   fontWeight = styleEqual(c("F0005","F0011","F0016","F0017","F0020"),
                                           c("bold","bold","bold","bold","bold"))) %>% 
-  DT::formatRound(columns = colnames(select(fun_bal,-rubrica,-funcional_code)), digits = 0, mark = ".")
+  DT::formatRound(columns = colnames(select(fun_bal(),-rubrica,-funcional_code)), digits = 0, mark = ".")
+  
+  )
+
+```
+
+### Cash Flow
+
+```{r}
+
+renderDataTable(
+  
+  cf() %>% 
+  DT::datatable(
+  rownames = FALSE,
+  extensions = "Buttons",
+  options = list(
+    # adds buttons
+    dom = 'Bfrtip',
+    buttons = c("copy", "csv", "excel","pdf","print"),
+    # number of entries on display
+    pageLength = 100,
+    initComplete = JS(
+       "function(settings, json) {",
+        "$(this.api().table().header()).css({'font-size': '8pt'});",
+        "}"
+    )), 
+  fillContainer = TRUE) %>% 
+  DT::formatStyle(colnames(cf()), fontSize = "8pt") %>%
+  DT::formatStyle("cf_code",
+                  target = "row", 
+                  fontWeight = styleEqual(c("CF003","CF007","CF008","CF013","CF019","CF020","CF024"),
+                                          c("bold","bold","bold","bold","bold","bold","bold"))) %>% 
+  DT::formatRound(columns = colnames(select(cf(),-rubrica,-cf_code)), digits = 0, mark = ".")
   
   )
 
 ```
 
 
-Column 
+Liquidity & Solvency {data-orientation=columns data-navmenu=Details}
+=======================================================================
+
+Column {data-width=500}
 -----------------------------------------------------------------------
 
 ### Cash generation
 
-
 ```{r}
+
+cash_kpi <-   reactive({
+  fun_bal() %>%
+    filter(funcional_code == "F0017") %>%
+    rename(account = funcional_code) %>% 
+    rbind(df() %>% 
+            select(-financial_statement) %>% 
+            filter(account %in% c("A00001","A00113","A00115","A00146","A00006","A00007"))) %>% 
+    replace(., is.na(.),0) %>% 
+    select(-rubrica) %>% 
+    gather(key = "date",value = "value", contains("20")) %>% 
+    spread(key = account,value = value) %>% 
+    mutate(date = ymd(date),
+           dwc = F0017 * 365/abs(A00001),
+           tme = A00113/A00006 * 365,
+           tmr = A00115/abs(A00001) * 365,
+           tmp = -A00146/(A00006+A00007)*365,
+           ccc = tme + tmr - tmp)
+  })
+
+renderPlotly(
+  
+  cash_kpi() %>% 
+    gather("kpi","value",-contains("date")) %>% 
+    mutate(kpi = factor(kpi)) %>% 
+    filter(kpi %in% c("dwc","ccc")) %>%  
+    ggplot(aes(x = date, y = value, group = kpi)) +
+    geom_line(aes(color = kpi))+
+    geom_point(aes(color = kpi))+
+    scale_color_brewer(palette="Dark2")+
+    labs( x="",y = "") +
+    theme(legend.position="top")
+    
+)
 
 ```
 
@@ -529,16 +760,127 @@ Column
 
 ```{r}
 
+liq_kpi <- reactive({
+  df() %>% 
+    select(-financial_statement,-rubrica) %>% 
+    filter(account %in% c("A00124","A00115","A00113","A00156")) %>% 
+    replace(., is.na(.),0) %>%
+    gather(key = "date", value = "value",contains("20")) %>% 
+    spread(key = account, value = value) %>% 
+    mutate(
+      date = ymd(date),
+      liq_geral = (A00115 + A00124 + A00113) / -A00156,
+      liq_reduzida = (A00115 + A00124 ) / -A00156,
+      liq_imediata = A00124 / -A00156
+    )
+    
+  })
+
+renderPlotly(
+
+  liq_kpi() %>% 
+    gather("kpi","value",-contains("date")) %>% 
+    mutate(kpi = factor(kpi)) %>% 
+    filter(kpi %in% c("liq_geral", "liq_reduzida", "liq_imediata")) %>% 
+    ggplot(aes(x = date, y = value, fill = kpi)) + 
+    geom_area(alpha=0.4) +
+    scale_fill_brewer(palette="Dark2")+
+    scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+    labs( x="",y = "") +
+    theme(legend.position="top")
+)
+
 ```
 
 > Current ratio, Quick Ratio, Acid test ratio
+
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Net Debt to Ebitda
+
+```{r}
+
+kpi00010 <- reactive({dbGetQuery(con,sqlInterpolate(ANSI(),
+                                "SELECT
+                                  vat_number, account,year,month,value
+                                FROM
+                                  ( SELECT
+                                        vat_number, account,year,month,value
+                                    FROM
+                                        statements
+                                    WHERE
+                                       account IN (
+                                       'A00018','A00124','A00141','A00149')
+                                    ) AS t
+                                WHERE
+                                  vat_number = ?vat;",
+                                vat = input$company_select)) %>%
+    spread(account,value) %>%
+    replace(., is.na(.),0) %>%   
+    mutate(
+      kpi00010 = -A00018/(abs(A00141+A00149)-A00124),
+      kpi00010 = ifelse(kpi00010 < 0 | is.na(kpi00010), 0, kpi00010)
+      ) %>%
+    mutate(date = ymd(paste0(year,"-",month,"-01"))) %>%
+    select(-vat_number, -year, -month) %>%
+    select(date,everything()) %>%
+    arrange(desc(date))})
+
+renderPlotly(
+  kpi00010() %>% 
+    select(NetDebtEbitda = kpi00010, everything()) %>% 
+    ggplot(aes(x = date, y = NetDebtEbitda)) +
+    geom_area(fill="#69b3a2", alpha=0.4) +
+    geom_line(color="#69b3a2") +
+    geom_point(size = 0.5, color="#69b3a2") +
+    scale_y_continuous(labels = xs) +
+    labs( x="",y = "")
+)
+
+```
+
+>
 
 ### Debt
 
 ```{r}
 
+debt_kpi <- reactive({
+  df() %>% 
+    select(-financial_statement,-rubrica) %>% 
+    filter(account %in% c("A00157","A00126","A00139")) %>% 
+    replace(., is.na(.),0) %>%
+    gather(key = "date", value = "value",contains("20")) %>% 
+    spread(key = account, value = value) %>% 
+    mutate(
+      date = ymd(date),
+      endividamento = -A00157 / A00126,
+      solvabilidade = -A00139 / -A00157,
+      auto_fin = -A00139/A00126
+    )
+  })
+
+renderPlotly(
+
+  debt_kpi() %>% 
+    gather("kpi","value",-contains("date")) %>% 
+    mutate(kpi = factor(kpi)) %>% 
+    filter(kpi %in% c("endividamento", "solvabilidade", "auto_fin")) %>% 
+    ggplot(aes(x = date, y = value, fill = kpi)) + 
+    #geom_bar(stat = "identity", position=position_dodge())+ 
+    geom_line(aes(color = kpi))+
+    geom_point(aes(color = kpi))+
+    scale_fill_brewer(palette="Dark2")+
+    scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+    labs( x="",y = "") +
+    theme(legend.position="top")
+)
+
 ```
 
+> Autonomia financeira = Capital Próprio / Ativo; Solvabilidade = Capital Próprio / Passivo; Endividamento = Passivo / Ativo
 
 Market
 =======================================================================
