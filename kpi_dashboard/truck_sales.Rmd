@@ -10,7 +10,6 @@ output: html_notebook
 library(OECD)
 library(tidyverse)
 library(caret)
-
 library(plotly)
 ```
 
@@ -30,11 +29,11 @@ oecd_treated <- oecd_data %>%
 # Local statistics about the market
 
 # sales
-ine_vnd_veiculos <- read_delim("kpi_dashboard/data/ine_vnd_veiculos.csv", 
+ine_vnd_veiculos <- read_delim("../kpi_dashboard/data/ine_vnd_veiculos.csv", 
     ";", escape_double = FALSE, trim_ws = TRUE)
 
 # number of trucks
-ine_number_veiculos <- read_delim("kpi_dashboard/data/ine_circ_veiculos.csv", 
+ine_number_veiculos <- read_delim("../kpi_dashboard/data/ine_circ_veiculos.csv", 
     ";", escape_double = FALSE, trim_ws = TRUE)
 
 ```
@@ -51,6 +50,8 @@ market_data <- ine_vnd_veiculos %>%
   left_join(oecd_treated, by = "year")
 
 ```
+
+# Plot models
 
 ```{r}
 market_data %>% 
@@ -83,3 +84,32 @@ market_data %>%
   stat_smooth(method="lm",formula=y~x, se = F, aes(colour = 'linear'))+
   stat_smooth(method="lm",formula=y~poly(x,2), se = F,aes(colour = 'polynomial'))
 ```
+
+
+# Baseline models
+
+```{r}
+
+lm_model <- caret::train(sales ~ . -year-number, 
+                         data = market_data %>% drop_na(), 
+                         method = "lm",trControl = trainControl(method = "cv", 
+                                                                number = 10,
+                                                                verboseIter = TRUE) )
+
+summary(lm_model)
+```
+
+```{r}
+
+lm_model <- caret::train(sales ~ GDP + GDPV_CAP, 
+                         data = market_data %>% drop_na(), 
+                         method = "lm",trControl = trainControl(method = "cv", 
+                                                                number = 10,
+                                                                verboseIter = TRUE) )
+
+summary(lm_model)
+```
+
+The F-test of overall significance indicates whether a linear model provides a better fit to the data than a model that contains o *independent variables*.
+
+https://statisticsbyjim.com/regression/interpret-f-test-overall-significance-regression/
