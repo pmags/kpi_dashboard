@@ -1,0 +1,85 @@
+---
+title: "Venda de camiões em Portugal"
+subtitle: "Fatores de influência"
+output: html_notebook
+---
+
+
+```{r}
+# libraries
+library(OECD)
+library(tidyverse)
+library(caret)
+
+library(plotly)
+```
+
+```{r}
+# importing lastest macro information
+
+# GDP and GDP per capita information and forecast
+oecd_data <- get_dataset("EO",filter = list(c("PRT"),c("GDP","GDP_ANNPCT","GDPV_CAP"))) 
+
+oecd_treated <- oecd_data %>% 
+  mutate(obsTime = as.numeric(obsTime)) %>% 
+  filter(obsTime != is.na(obsTime)) %>% 
+  select(year = obsTime, var = VARIABLE, obsValue) %>% 
+  spread(var,obsValue) %>% 
+  mutate(GDP_ANNPCT = GDP_ANNPCT/100 )
+
+# Local statistics about the market
+
+# sales
+ine_vnd_veiculos <- read_delim("kpi_dashboard/data/ine_vnd_veiculos.csv", 
+    ";", escape_double = FALSE, trim_ws = TRUE)
+
+# number of trucks
+ine_number_veiculos <- read_delim("kpi_dashboard/data/ine_circ_veiculos.csv", 
+    ";", escape_double = FALSE, trim_ws = TRUE)
+
+```
+
+```{r}
+
+# Initial database
+market_data <- ine_vnd_veiculos %>% 
+  group_by(year) %>% 
+  summarise(sales = sum(sales)) %>% 
+  right_join(x = ine_number_veiculos %>% 
+              group_by(year) %>% 
+              summarise(number = sum(number)),by = "year") %>% 
+  left_join(oecd_treated, by = "year")
+
+```
+
+```{r}
+market_data %>% 
+  ggplot(aes(x = GDP_ANNPCT, y = sales)) + 
+  geom_point() + 
+  stat_smooth(method="lm",formula=y~x, se = F, aes(colour = 'linear'))+
+  stat_smooth(method="lm",formula=y~poly(x,2), se = F,aes(colour = 'polynomial'))
+```
+
+```{r}
+market_data %>% 
+  ggplot(aes(x = GDP, y = sales)) + 
+  geom_point() + 
+  stat_smooth(method="lm",formula=y~x, se = F, aes(colour = 'linear'))+
+  stat_smooth(method="lm",formula=y~poly(x,2), se = F,aes(colour = 'polynomial'))
+```
+
+```{r}
+market_data %>% 
+  ggplot(aes(x = GDPV_CAP, y = sales)) + 
+  geom_point() + 
+  stat_smooth(method="lm",formula=y~x, se = F, aes(colour = 'linear'))+
+  stat_smooth(method="lm",formula=y~poly(x,2), se = F,aes(colour = 'polynomial'))
+```
+
+```{r}
+market_data %>% 
+  ggplot(aes(x = number, y = sales)) + 
+  geom_point() + 
+  stat_smooth(method="lm",formula=y~x, se = F, aes(colour = 'linear'))+
+  stat_smooth(method="lm",formula=y~poly(x,2), se = F,aes(colour = 'polynomial'))
+```

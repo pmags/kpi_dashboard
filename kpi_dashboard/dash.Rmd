@@ -699,7 +699,7 @@ renderDataTable(
   DT::formatStyle(colnames(cf()), fontSize = "8pt") %>%
   DT::formatStyle("cf_code",
                   target = "row", 
-                  fontWeight = styleEqual(c("CF003","CF007","CF008","CF013","CF019","CF020","CF024"),
+                  fontWeight = styleEqual(c("CF006","CF007","CF012","CF018","CF019","CF023","CF024"),
                                           c("bold","bold","bold","bold","bold","bold","bold"))) %>% 
   DT::formatRound(columns = colnames(select(cf(),-rubrica,-cf_code)), digits = 0, mark = ".")
   
@@ -708,10 +708,10 @@ renderDataTable(
 ```
 
 
-Liquidity & Solvency {data-orientation=columns data-navmenu=Details}
+Liquidity & Solvency {data-navmenu=Details}
 =======================================================================
 
-Column {data-width=500}
+Row {data-width=500}
 -----------------------------------------------------------------------
 
 ### Cash generation
@@ -756,6 +756,13 @@ renderPlotly(
 
 > Cash converstion cycle and Working Capital in days
 
+### Decomposition
+
+
+
+Row {data-width=500}
+-----------------------------------------------------------------------
+
 ### Liquidity
 
 ```{r}
@@ -794,9 +801,6 @@ renderPlotly(
 
 > Current ratio, Quick Ratio, Acid test ratio
 
-
-Column {data-width=500}
------------------------------------------------------------------------
 
 ### Net Debt to Ebitda
 
@@ -881,6 +885,40 @@ renderPlotly(
 ```
 
 > Autonomia financeira = Capital Próprio / Ativo; Solvabilidade = Capital Próprio / Passivo; Endividamento = Passivo / Ativo
+
+Operation {data-orientation=rows data-navmenu=Details}
+=======================================================================
+
+Row {data-width=500}
+-----------------------------------------------------------------------
+
+### Performance
+
+```{r}
+
+renderPlotly(
+  
+  data() %>% 
+  select(date, contains("kpi")) %>% 
+  gather("kpi","value",contains("kpi")) %>% 
+  mutate(kpi = factor(kpi)) %>% 
+  filter(kpi %in% c("kpi0009","kpi0008","kpi0007")) %>% 
+  mutate(kpi = forcats::fct_recode(kpi, "ROCE (%)" = "kpi0009", "Ebitda (%)" = "kpi0008", "Gross Margin (%)" = "kpi0007")) %>% 
+  ggplot(aes(x = date, y = value, group = kpi)) + 
+  geom_line(aes(color = kpi))+
+  geom_point(aes(color = kpi)) +
+  scale_color_brewer(palette="Dark2")+
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  labs( x="",y = "") +
+  theme(legend.position="top")
+  )
+
+```
+
+Row {data-width=500}
+-----------------------------------------------------------------------
+
+
 
 Market
 =======================================================================

@@ -108,7 +108,7 @@ FROM(
         CASE 
             WHEN
                 a.net_results = TRUE
-            THEN 'A00027'
+            THEN 'A00026'
 
             ELSE 'unk'
         END AS flag
