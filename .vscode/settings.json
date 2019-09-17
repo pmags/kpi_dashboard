@@ -10,5 +10,6 @@
             "server": "127.0.0.1",
             "username": "psm"
         }
-    ]
+    ],
+    "python.pythonPath": "C:\\Users\\Maktu\\Anaconda3\\python.exe"
 }

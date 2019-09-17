@@ -51,6 +51,13 @@ market_data <- ine_vnd_veiculos %>%
 
 ```
 
+# Correlation
+
+```{r}
+cor(market_data %>% select(sales,everything()) %>% select(-year)) 
+```
+
+
 # Plot models
 
 ```{r}
@@ -92,7 +99,9 @@ market_data %>%
 
 lm_model <- caret::train(sales ~ . -year-number, 
                          data = market_data %>% drop_na(), 
-                         method = "lm",trControl = trainControl(method = "cv", 
+                         method = "lm",
+                         metric = "RMSE",
+                         trControl = trainControl(method = "cv", 
                                                                 number = 10,
                                                                 verboseIter = TRUE) )
 
@@ -103,13 +112,42 @@ summary(lm_model)
 
 lm_model <- caret::train(sales ~ GDP + GDPV_CAP, 
                          data = market_data %>% drop_na(), 
-                         method = "lm",trControl = trainControl(method = "cv", 
+                         method = "lm",
+                         metric = "RMSE",
+                         trControl = trainControl(method = "cv", 
                                                                 number = 10,
                                                                 verboseIter = TRUE) )
 
 summary(lm_model)
+lm_model$results$RMSE
+
 ```
+
+```{r}
+
+lm_model_rel <- caret::train(sales ~ GDP * GDPV_CAP, 
+                         data = market_data%>% drop_na(), 
+                         method = "lm",
+                         metric = "RMSE",
+                         trControl = trainControl(method = "cv", 
+                                                                number = 10,
+                                                                verboseIter = TRUE) )
+
+summary(lm_model_rel)
+lm_model_rel$results$RMSE
+
+```
+
 
 The F-test of overall significance indicates whether a linear model provides a better fit to the data than a model that contains o *independent variables*.
 
 https://statisticsbyjim.com/regression/interpret-f-test-overall-significance-regression/
+
+# Predictions
+
+```{r}
+saveRDS(lm_model_rel, file = "www/model.rds")
+saveRDS(oecd_treated, file = "www/oecd_data.rds")
+saveRDS(market_data, file = "www/mkt.rds")
+```
+
