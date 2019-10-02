@@ -25,6 +25,15 @@
 				"port": 5432,
 				"server": "89.154.64.8",
 				"username": "pedro"
+			},
+			{
+				"database": "nors",
+				"dialect": "PostgreSQL",
+				"name": "nors-phi-remote",
+				"password": "admin",
+				"port": 5433,
+				"server": "89.154.64.8",
+				"username": "pi"
 			}
 		]
 	}

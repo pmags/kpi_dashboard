@@ -11,5 +11,5 @@
             "username": "psm"
         }
     ],
-    "python.pythonPath": "C:\\Users\\Maktu\\Anaconda3\\python.exe"
+    "python.pythonPath": "/usr/bin/python3"
 }
