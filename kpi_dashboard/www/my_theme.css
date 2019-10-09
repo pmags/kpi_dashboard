@@ -1,114 +1,124 @@
 
-.navbar-inverse {
-  background-color: #161616;
-  border-color: #FFFFFF;
+/* 
+
+Link for css basic style
+https://github.com/thomaspark/bootswatch/blob/v3.3.5/cosmo/bootstrap.css#L4643-L4744 
+
+*/
+
+.section.sidebar {
+  background-color:#f0f0f0;
+  font-size: 12px;
+  border-style:none;
 }
-.navbar-inverse .navbar-brand {
-  color: #777;
+
+.navbar {
+  background-color:white;
+  border-color:#f0f0f0;
+  font-family: Arial;
+  font-size:14px;
+  color:#3c6788;
 }
+
+.navbar-brand {
+  font-family: Arial;
+  font-size:19px;
+  font-weight: bold;
+  color:#3c6788!important;
+}
+
 .navbar-inverse .navbar-brand:hover,
 .navbar-inverse .navbar-brand:focus {
-  color: #5e5e5e;
-  background-color: transparent;
+  color: #3c6788;
+  background-color: none;
 }
 .navbar-inverse .navbar-text {
-  color: #777;
+  color: #3c6788;
 }
 .navbar-inverse .navbar-nav > li > a {
-  color: #777;
+  color: #3c6788;
 }
 .navbar-inverse .navbar-nav > li > a:hover,
 .navbar-inverse .navbar-nav > li > a:focus {
-  color: #333;
-  background-color: transparent;
+  color: #ffffff;
+  background-color: #6fcaed;
 }
 .navbar-inverse .navbar-nav > .active > a,
 .navbar-inverse .navbar-nav > .active > a:hover,
 .navbar-inverse .navbar-nav > .active > a:focus {
-  color: #555;
-  background-color: #e7e7e7;
+  color: #ffffff;
+  background-color: #6fcaed;
 }
 .navbar-inverse .navbar-nav > .disabled > a,
 .navbar-inverse .navbar-nav > .disabled > a:hover,
 .navbar-inverse .navbar-nav > .disabled > a:focus {
-  color: #ccc;
+  color: #3c6788;
   background-color: transparent;
 }
 .navbar-inverse .navbar-toggle {
-  border-color: #ddd;
+  border-color: transparent;
 }
 .navbar-inverse .navbar-toggle:hover,
 .navbar-inverse .navbar-toggle:focus {
-  background-color: #ddd;
+  background-color: #1967be;
 }
 .navbar-inverse .navbar-toggle .icon-bar {
-  background-color: #888;
+  background-color: #3c6788;
 }
 .navbar-inverse .navbar-collapse,
 .navbar-inverse .navbar-form {
-  border-color: #e7e7e7;
+  border-color: #1a6ecc;
 }
 .navbar-inverse .navbar-nav > .open > a,
 .navbar-inverse .navbar-nav > .open > a:hover,
 .navbar-inverse .navbar-nav > .open > a:focus {
-  color: #555;
-  background-color: #e7e7e7;
+  background-color: #1967be;
+  color: #3c6788;
 }
 @media (max-width: 767px) {
+  .navbar-inverse .navbar-nav .open .dropdown-menu > .dropdown-header {
+    border-color: #1967be;
+  }
+  .navbar-inverse .navbar-nav .open .dropdown-menu .divider {
+    background-color: #1967be;
+  }
   .navbar-inverse .navbar-nav .open .dropdown-menu > li > a {
-    color: #777;
+    color: #3c6788;
   }
   .navbar-inverse .navbar-nav .open .dropdown-menu > li > a:hover,
   .navbar-inverse .navbar-nav .open .dropdown-menu > li > a:focus {
-    color: #333;
-    background-color: transparent;
+    color: #3c6788;
+    background-color: #1967be;
   }
   .navbar-inverse .navbar-nav .open .dropdown-menu > .active > a,
   .navbar-inverse .navbar-nav .open .dropdown-menu > .active > a:hover,
   .navbar-inverse .navbar-nav .open .dropdown-menu > .active > a:focus {
-    color: #555;
-    background-color: #e7e7e7;
+    color: #3c6788;
+    background-color: #1967be;
   }
   .navbar-inverse .navbar-nav .open .dropdown-menu > .disabled > a,
   .navbar-inverse .navbar-nav .open .dropdown-menu > .disabled > a:hover,
   .navbar-inverse .navbar-nav .open .dropdown-menu > .disabled > a:focus {
-    color: #ccc;
+    color: #3c6788;
     background-color: transparent;
   }
 }
 .navbar-inverse .navbar-link {
-  color: #777;
+  color: #3c6788;
 }
 .navbar-inverse .navbar-link:hover {
-  color: #333;
+  color: #3c6788;
 }
 .navbar-inverse .btn-link {
-  color: #777;
+  color: #3c6788;
 }
 .navbar-inverse .btn-link:hover,
 .navbar-inverse .btn-link:focus {
-  color: #333;
+  color: #3c6788;
 }
 .navbar-inverse .btn-link[disabled]:hover,
 fieldset[disabled] .navbar-inverse .btn-link:hover,
 .navbar-inverse .btn-link[disabled]:focus,
 fieldset[disabled] .navbar-inverse .btn-link:focus {
-  color: #ccc;
-}
-
-body {
-  padding-top: 60px;
-}
-
-.section.sidebar {
-  top: 51px;
-  background-color: rgba(3, 60, 115, 0.1);
-}
-
-.nav-tabs-custom > .nav-tabs > li.active {
-  border-top-color: #2fa4e7;
-}
-
-.storyboard-nav .sbframelist ul li.active {
-  background-color: rgba(47, 164, 231, 0.7);
+  color: #3c6788;
 }
