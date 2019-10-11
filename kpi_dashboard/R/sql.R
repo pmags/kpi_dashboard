@@ -111,6 +111,7 @@ FROM(
         f.tl = true AND
         f.funcional_code IS NOT NULL
     GROUP BY vat_number, year, month
+    
 
 ) AS data
 LEFT JOIN funcional_account USING (funcional_code)
