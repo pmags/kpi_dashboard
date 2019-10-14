@@ -231,7 +231,7 @@ renderPlotly(
 
 ### Cobertura corrente
 
-```{r}
+```{r plot cobertura corrente}
 
 renderPlotly({
   
@@ -264,7 +264,7 @@ renderPlotly({
 Mapas
 =======================================================================
 
-```{r}
+```{r demonstrações financeiras query}
 
 df <- reactive({
   dbGetQuery(con,sqlInterpolate(ANSI(), q_df, vat = input$company_select)) %>%
@@ -280,13 +280,12 @@ df <- reactive({
 
 ```
 
-```{r}
+```{r balanço funcional query}
 fun_bal <- reactive({
   dbGetQuery(con,sqlInterpolate(ANSI(), q_fun_bal,vat = input$company_select)) %>%
     filter(if (input$interim == FALSE) month == 12 else month == month ) %>% 
     filter(year >= min(input$year_slider) & year <= max(input$year_slider)) %>%
-    mutate(date = ymd(paste0(year,"-",month,"-01")), 
-           date = format(date, "%m-%Y")) %>%
+    mutate(date = ymd(paste0(year,"-",month,"-01"))) %>%
     arrange(desc(date)) %>% 
     select(-year, -month,-vat_number) %>%
     spread(date, value) %>%
@@ -295,7 +294,7 @@ fun_bal <- reactive({
 
 ```
 
-```{r}
+```{r cash flow query}
 cf <- reactive({
   dbGetQuery(con,sqlInterpolate(ANSI(), q_cashflow, vat = input$company_select)) %>%
     filter(if (input$interim == FALSE) month == 12 else month == month ) %>% 
@@ -317,7 +316,7 @@ Column {.tabset}
 
 ### Balanço
 
-```{r}
+```{r balance map}
 
 renderDataTable(
   df() %>%
@@ -351,7 +350,7 @@ renderDataTable(
 
 ### Demonstração de resultados
 
-```{r}
+```{r p&l map}
 
 renderDataTable(
   
@@ -386,7 +385,7 @@ renderDataTable(
 
 ### Balanço funcional
 
-```{r}
+```{r funcional map}
 
 renderDataTable(
   
@@ -419,7 +418,7 @@ renderDataTable(
 
 ### Fluxo de caixa (anual)
 
-```{r}
+```{r cash flow map}
 
 renderDataTable(
   
@@ -450,6 +449,72 @@ renderDataTable(
 
 ```
 
+Equilibrio financeiro {data-navmenu=Análises data-orientation=columns}
+======================================================================= 
+
+Column
+-----------------------------------------------------------------------
+
+### Equilibrio financeiro
+
+```{r}
+# TODO: Acrescentar referências dos gráficos
+
+eq_data <- reactive({fun_bal() %>%  
+    select(-rubrica) %>% 
+    filter(funcional_code %in% c("F0005","F0017")) %>% 
+    gather(key = "date", value = "value",-one_of(c("funcional_code"))) %>% 
+    spread(key = funcional_code, value = value) %>% 
+    mutate(F0005 = -F0005)})
+
+renderPlotly({
+  
+  eq_data() %>% 
+    ggplot(aes(x = F0005, y = F0017, color = date)) +
+      geom_point() + 
+      geom_abline(intercept = 0, colour = "coral") +
+      lims(x = c(-min(eq_data()$F0005),NA), y = c(-min(eq_data()$F0017),NA))+
+      geom_vline(xintercept = 0,linetype = "dashed", colour = "grey15", size =.3) + 
+      geom_hline(yintercept = 0,linetype = "dashed", colour = "grey15", size=.3) +
+      scale_y_continuous(labels = ks) +
+      scale_x_continuous(labels = ks) +
+      labs(x="Fundo de Maneio Funcional",y="Necessidades de Fundo de Maneio",color="")
+    
+})
+```
+
+### Tesouraria Líquida
+
+```{r}
+
+renderPlotly(
+  fun_bal() %>%
+    select(-rubrica) %>%
+    filter(funcional_code == "F0020") %>%
+    gather(key = "date", value = "value",-one_of(c("funcional_code"))) %>%
+    spread(key = funcional_code, value = value) %>% 
+    ggplot(aes( x = as.Date(date), y = F0020)) +
+    geom_area(fill = "#3c6788", alpha = 0.4) +
+    geom_line(color = "#3c6788") +
+    geom_point(size = 0.7, color = "#3c6788") +
+    labs(x="",y="")
+)
+
+
+```
+
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### Necessidades
+```{r}
+
+```
+
+### Recursos
+```{r}
+
+```
 
 <!-- Liquidity & Solvency {data-navmenu=Details} -->
 <!-- ======================================================================= -->
