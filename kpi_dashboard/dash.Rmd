@@ -521,7 +521,7 @@ nfm <-  reactive({fun_bal() %>%
            necessidades_vnd = F0011/vendas*365,
            recursos_vnd=-F0016/vendas*365,
            inv_vnd = F0007/vendas*365,
-           clts_vnd=F0006/vendas*36+5,
+           clts_vnd=F0006/vendas*365,
            noutros_vnd=necessidades_vnd - inv_vnd - clts_vnd,
            forn_vnd=-F0012/vendas*365,
            routros_vnd=recursos_vnd-forn_vnd)
@@ -589,11 +589,15 @@ renderPlotly(
 )
 ```
 
-Necessidades ciclicas {data-navmenu=Análises data-orientation=rows}
+Necessidades cíclicas {data-navmenu=Análises data-orientation=rows}
 ======================================================================= 
+
+Row
+-----------------------------------------------------------------------
 
 ### Necessidades (dias de vendas)
 ```{r}
+
 renderPlotly(
   nfm() %>% 
     select(date,inv_vnd,clts_vnd,noutros_vnd) %>% 
@@ -615,20 +619,37 @@ Row
 ### Contributo inventários
 ```{r}
 
+renderPlotly(
+  nfm() %>% 
+    select(date, inv_vnd) %>% 
+    mutate(date = ymd(date)) %>% 
+    left_join(select(sales_kpi(),date, margem_bruta = margem_bruta), by="date") %>% 
+    mutate(inv_vnd = inv_vnd, 
+           tme = inv_vnd/(1-margem_bruta),
+           peso_tme = tme/inv_vnd,
+           peso_mb = margem_bruta*peso_tme) %>% 
+    select(date,peso_mb,peso_tme) %>% 
+    gather("kpi","value",-date) %>% 
+    ggplot(aes(x = date,y =value ,fill = kpi)) +
+    geom_bar(stat="identity",position=position_dodge())+
+    scale_fill_brewer(palette= "Paired",labels = c("Peso margem bruta %" , "Peso TME %")) +
+    labs( x="",y = "", fill = "") +
+    theme(legend.position="top")
+)
+
 ```
 
-### Contributo clientes
-```{r}
-
-```
 
 ### Outros contributos
 ```{r}
 
 ```
 
-Recursos ciclic0s {data-navmenu=Análises data-orientation=rows}
+Recursos cíclicos {data-navmenu=Análises data-orientation=rows}
 ======================================================================= 
+
+Row
+-----------------------------------------------------------------------
 
 ### Necessidades (dias de vendas)
 ```{r}

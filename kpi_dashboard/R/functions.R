@@ -30,3 +30,4 @@ xs <- function(x) {
 # plots ----                                         
 # ======================================================================================= #
 
+# Grammar of graphics: data, aesthetics(tell us which scales), Geometries, facets, Statistics, coordinates, theme 
