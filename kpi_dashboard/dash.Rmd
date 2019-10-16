@@ -13,7 +13,7 @@ output:
 ---
 
 ```{r eval=FALSE, include=FALSE}
-2# TODO: mapa de controlo das conciliações
+# TODO: mapa de controlo das conciliações
 
 ## names:
 # q_ query to database
@@ -270,7 +270,7 @@ df <- reactive({
   dbGetQuery(con,sqlInterpolate(ANSI(), q_df, vat = input$company_select)) %>%
     filter(if (input$interim == FALSE) month == 12 else month == month ) %>% 
     filter(year >= min(input$year_slider) & year <= max(input$year_slider)) %>%
-    mutate(date = ymd(paste0(year,"-",month,"-01"))) %>%
+    mutate(date = ymd(paste0(year,"-",month,"-1"))) %>%
     arrange(desc(date)) %>% 
     #mutate(date = format(date, "%m-%Y")) %>% 
     select(-year, -month,-vat_number) %>%
@@ -285,7 +285,7 @@ fun_bal <- reactive({
   dbGetQuery(con,sqlInterpolate(ANSI(), q_fun_bal,vat = input$company_select)) %>%
     filter(if (input$interim == FALSE) month == 12 else month == month ) %>% 
     filter(year >= min(input$year_slider) & year <= max(input$year_slider)) %>%
-    mutate(date = ymd(paste0(year,"-",month,"-01"))) %>%
+    mutate(date = ymd(paste0(year,"-",month,"-1"))) %>%
     arrange(desc(date)) %>% 
     select(-year, -month,-vat_number) %>%
     spread(date, value) %>%
@@ -299,7 +299,7 @@ cf <- reactive({
   dbGetQuery(con,sqlInterpolate(ANSI(), q_cashflow, vat = input$company_select)) %>%
     filter(if (input$interim == FALSE) month == 12 else month == month ) %>% 
     filter(year >= min(input$year_slider) & year <= max(input$year_slider)) %>%
-    mutate(date = ymd(paste0(year,"-",month,"-01")), 
+    mutate(date = ymd(paste0(year,"-",month,"-1")), 
            date = format(date, "%m-%Y")) %>%
     arrange(desc(date)) %>% 
     select(-year, -month,-vat_number) %>%
@@ -387,6 +387,8 @@ renderDataTable(
 
 ```{r funcional map}
 
+# FIXME : Organizar quadros
+
 renderDataTable(
   
   fun_bal() %>% 
@@ -452,7 +454,7 @@ renderDataTable(
 Equilibrio financeiro {data-navmenu=Análises data-orientation=columns}
 ======================================================================= 
 
-Column
+Column 
 -----------------------------------------------------------------------
 
 ### Equilibrio financeiro
@@ -483,10 +485,52 @@ renderPlotly({
 })
 ```
 
-### Tesouraria Líquida
+### Necessidades fundo de maneio
 
 ```{r}
 
+renderPlotly(
+  nfm() %>% 
+    select(date,nfm_vnd,necessidades_vnd, recursos_vnd) %>% 
+    gather("kpi","value",-date) %>% 
+    mutate(kpi=factor(kpi)) %>% 
+    ggplot(aes(x=date,y=value,group=kpi)) +
+    geom_line(aes(color=kpi)) +
+    geom_point(aes(color=kpi)) +
+    scale_color_brewer(palette="Paired") +
+    labs( x="",y = "", color = "") +
+    theme(legend.position="top")
+)
+
+```
+
+Column {data-width=370}
+-----------------------------------------------------------------------
+
+```{r}
+nfm <-  reactive({fun_bal() %>%  
+    select(-rubrica) %>% 
+    filter(funcional_code %in% c(paste0("F000",6:9),paste0("F00",10:17))) %>% 
+    gather(key = "date", value = "value",-one_of(c("funcional_code"))) %>% 
+    spread(key = funcional_code, value = value) %>% 
+    replace(., is.na(.),0) %>%  
+    mutate(date = ymd(date)) %>% 
+    left_join(select(sales_kpi(),date, vendas = A00001), by="date") %>% 
+    mutate(vendas=-vendas) %>% 
+    mutate(nfm_vnd = F0017/vendas*365,
+           necessidades_vnd = F0011/vendas*365,
+           recursos_vnd=-F0016/vendas*365,
+           inv_vnd = F0007/vendas*365,
+           clts_vnd=F0006/vendas*36+5,
+           noutros_vnd=necessidades_vnd - inv_vnd - clts_vnd,
+           forn_vnd=-F0012/vendas*365,
+           routros_vnd=recursos_vnd-forn_vnd)
+  })
+```
+
+### Tesouraria líquida
+
+```{r}
 renderPlotly(
   fun_bal() %>%
     select(-rubrica) %>%
@@ -497,238 +541,123 @@ renderPlotly(
     geom_area(fill = "#3c6788", alpha = 0.4) +
     geom_line(color = "#3c6788") +
     geom_point(size = 0.7, color = "#3c6788") +
-    labs(x="",y="")
+    labs(x="",y="") +
+    scale_y_continuous(labels = ks)
 )
 
+```
+
+```{r}
+renderPlotly(
+  nfm() %>% 
+    select(date,nfm_vnd) %>% 
+    ggplot(aes(x=date,y=nfm_vnd)) + 
+    geom_line() 
+)
+```
+
+### Necessidades (dias de vendas)
+```{r}
+renderPlotly(
+  nfm() %>% 
+    select(date,inv_vnd,clts_vnd,noutros_vnd) %>% 
+    gather("kpi","value",-date) %>% 
+    mutate(kpi=factor(kpi)) %>% 
+    ggplot(aes(x=date,y=value,group=kpi)) +
+    geom_line(aes(color=kpi)) +
+    geom_point(aes(color=kpi)) +
+    scale_color_brewer(palette="Dark2") +
+    labs( x="",y = "", color = "") +
+    theme(legend.position="top")
+)
 
 ```
 
-Column {.tabset}
+### Recursos (dias de vendas)
+```{r}
+renderPlotly(
+  nfm() %>% 
+    select(date,forn_vnd,routros_vnd) %>% 
+    gather("kpi","value",-date) %>% 
+    mutate(kpi=factor(kpi)) %>% 
+    ggplot(aes(x=date,y=value,group=kpi)) +
+    geom_line(aes(color=kpi)) +
+    geom_point(aes(color=kpi)) +
+    scale_color_brewer(palette="Paired") +
+    labs( x="",y = "", color = "") +
+    theme(legend.position="top")
+)
+```
+
+Necessidades ciclicas {data-navmenu=Análises data-orientation=rows}
+======================================================================= 
+
+### Necessidades (dias de vendas)
+```{r}
+renderPlotly(
+  nfm() %>% 
+    select(date,inv_vnd,clts_vnd,noutros_vnd) %>% 
+    gather("kpi","value",-date) %>% 
+    mutate(kpi=factor(kpi)) %>% 
+    ggplot(aes(x=date,y=value,group=kpi)) +
+    geom_line(aes(color=kpi)) +
+    geom_point(aes(color=kpi)) +
+    scale_color_brewer(palette="Dark2") +
+    labs( x="",y = "", color = "") +
+    theme(legend.position="top")
+)
+
+```
+
+Row
 -----------------------------------------------------------------------
 
-### Necessidades
+### Contributo inventários
 ```{r}
 
 ```
 
-### Recursos
+### Contributo clientes
 ```{r}
 
 ```
 
-<!-- Liquidity & Solvency {data-navmenu=Details} -->
-<!-- ======================================================================= -->
+### Outros contributos
+```{r}
 
-<!-- Row {data-width=500} -->
-<!-- ----------------------------------------------------------------------- -->
+```
 
-<!-- ### Cash generation -->
+Recursos ciclic0s {data-navmenu=Análises data-orientation=rows}
+======================================================================= 
 
-<!-- ```{r} -->
+### Necessidades (dias de vendas)
+```{r}
+renderPlotly(
+  nfm() %>% 
+    select(date,forn_vnd,routros_vnd) %>% 
+    gather("kpi","value",-date) %>% 
+    mutate(kpi=factor(kpi)) %>% 
+    ggplot(aes(x=date,y=value,group=kpi)) +
+    geom_line(aes(color=kpi)) +
+    geom_point(aes(color=kpi)) +
+    scale_color_brewer(palette="Paired") +
+    labs( x="",y = "", color = "") +
+    theme(legend.position="top")
+)
+```
 
-<!-- cash_kpi <-   reactive({ -->
-<!--   fun_bal() %>% -->
-<!--     filter(funcional_code == "F0017") %>% -->
-<!--     rename(account = funcional_code) %>%  -->
-<!--     rbind(df() %>%  -->
-<!--             select(-financial_statement) %>%  -->
-<!--             filter(account %in% c("A00001","A00113","A00115","A00146","A00006","A00007"))) %>%  -->
-<!--     replace(., is.na(.),0) %>%  -->
-<!--     select(-rubrica) %>%  -->
-<!--     gather(key = "date",value = "value", contains("20")) %>%  -->
-<!--     spread(key = account,value = value) %>%  -->
-<!--     mutate(date = ymd(date), -->
-<!--            dwc = F0017 * 365/abs(A00001), -->
-<!--            tme = A00113/A00006 * 365, -->
-<!--            tmr = A00115/abs(A00001) * 365, -->
-<!--            tmp = -A00146/(A00006+A00007)*365, -->
-<!--            ccc = tme + tmr - tmp) -->
-<!--   }) -->
+Row
+-----------------------------------------------------------------------
 
-<!-- renderPlotly( -->
+### Contributo fornecedores
+```{r}
 
-<!--   cash_kpi() %>%  -->
-<!--     gather("kpi","value",-contains("date")) %>%  -->
-<!--     mutate(kpi = factor(kpi)) %>%  -->
-<!--     filter(kpi %in% c("dwc","ccc")) %>%   -->
-<!--     ggplot(aes(x = date, y = value, group = kpi)) + -->
-<!--     geom_line(aes(color = kpi))+ -->
-<!--     geom_point(aes(color = kpi))+ -->
-<!--     scale_color_brewer(palette="Dark2")+ -->
-<!--     labs( x="",y = "") + -->
-<!--     theme(legend.position="top") -->
+```
 
-<!-- ) -->
+### Outros contributos
+```{r}
 
-<!-- ``` -->
-
-<!-- > Cash converstion cycle and Working Capital in days -->
-
-<!-- ### Decomposition -->
-
-
-
-<!-- Row {data-width=500} -->
-<!-- ----------------------------------------------------------------------- -->
-
-<!-- ### Liquidity -->
-
-<!-- ```{r} -->
-
-<!-- liq_kpi <- reactive({ -->
-<!--   df() %>%  -->
-<!--     select(-financial_statement,-rubrica) %>%  -->
-<!--     filter(account %in% c("A00124","A00115","A00113","A00156")) %>%  -->
-<!--     replace(., is.na(.),0) %>% -->
-<!--     gather(key = "date", value = "value",contains("20")) %>%  -->
-<!--     spread(key = account, value = value) %>%  -->
-<!--     mutate( -->
-<!--       date = ymd(date), -->
-<!--       liq_geral = (A00115 + A00124 + A00113) / -A00156, -->
-<!--       liq_reduzida = (A00115 + A00124 ) / -A00156, -->
-<!--       liq_imediata = A00124 / -A00156 -->
-<!--     ) -->
-
-<!--   }) -->
-
-<!-- renderPlotly( -->
-
-<!--   liq_kpi() %>%  -->
-<!--     gather("kpi","value",-contains("date")) %>%  -->
-<!--     mutate(kpi = factor(kpi)) %>%  -->
-<!--     filter(kpi %in% c("liq_geral", "liq_reduzida", "liq_imediata")) %>%  -->
-<!--     ggplot(aes(x = date, y = value, fill = kpi)) +  -->
-<!--     geom_area(alpha=0.4) + -->
-<!--     scale_fill_brewer(palette="Dark2")+ -->
-<!--     scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + -->
-<!--     labs( x="",y = "") + -->
-<!--     theme(legend.position="top") -->
-<!-- ) -->
-
-<!-- ``` -->
-
-<!-- > Current ratio, Quick Ratio, Acid test ratio -->
-
-
-<!-- ### Net Debt to Ebitda -->
-
-<!-- ```{r} -->
-
-<!-- kpi00010 <- reactive({dbGetQuery(con,sqlInterpolate(ANSI(), -->
-<!--                                 "SELECT -->
-<!--                                   vat_number, account,year,month,value -->
-<!--                                 FROM -->
-<!--                                   ( SELECT -->
-<!--                                         vat_number, account,year,month,value -->
-<!--                                     FROM -->
-<!--                                         statements -->
-<!--                                     WHERE -->
-<!--                                        account IN ( -->
-<!--                                        'A00018','A00124','A00141','A00149') -->
-<!--                                     ) AS t -->
-<!--                                 WHERE -->
-<!--                                   vat_number = ?vat;", -->
-<!--                                 vat = input$company_select)) %>% -->
-<!--     spread(account,value) %>% -->
-<!--     replace(., is.na(.),0) %>%    -->
-<!--     mutate( -->
-<!--       kpi00010 = -A00018/(abs(A00141+A00149)-A00124), -->
-<!--       kpi00010 = ifelse(kpi00010 < 0 | is.na(kpi00010), 0, kpi00010) -->
-<!--       ) %>% -->
-<!--     mutate(date = ymd(paste0(year,"-",month,"-01"))) %>% -->
-<!--     select(-vat_number, -year, -month) %>% -->
-<!--     select(date,everything()) %>% -->
-<!--     arrange(desc(date))}) -->
-
-<!-- renderPlotly( -->
-<!--   kpi00010() %>%  -->
-<!--     select(NetDebtEbitda = kpi00010, everything()) %>%  -->
-<!--     ggplot(aes(x = date, y = NetDebtEbitda)) + -->
-<!--     geom_area(fill="#69b3a2", alpha=0.4) + -->
-<!--     geom_line(color="#69b3a2") + -->
-<!--     geom_point(size = 0.5, color="#69b3a2") + -->
-<!--     scale_y_continuous(labels = xs) + -->
-<!--     labs( x="",y = "") -->
-<!-- ) -->
-
-<!-- ``` -->
-
-<!-- > -->
-
-<!-- ### Debt -->
-
-<!-- ```{r} -->
-
-<!-- debt_kpi <- reactive({ -->
-<!--   df() %>%  -->
-<!--     select(-financial_statement,-rubrica) %>%  -->
-<!--     filter(account %in% c("A00157","A00126","A00139")) %>%  -->
-<!--     replace(., is.na(.),0) %>% -->
-<!--     gather(key = "date", value = "value",contains("20")) %>%  -->
-<!--     spread(key = account, value = value) %>%  -->
-<!--     mutate( -->
-<!--       date = ymd(date), -->
-<!--       endividamento = -A00157 / A00126, -->
-<!--       solvabilidade = -A00139 / -A00157, -->
-<!--       auto_fin = -A00139/A00126 -->
-<!--     ) -->
-<!--   }) -->
-
-<!-- renderPlotly( -->
-
-<!--   debt_kpi() %>%  -->
-<!--     gather("kpi","value",-contains("date")) %>%  -->
-<!--     mutate(kpi = factor(kpi)) %>%  -->
-<!--     filter(kpi %in% c("endividamento", "solvabilidade", "auto_fin")) %>%  -->
-<!--     ggplot(aes(x = date, y = value, fill = kpi)) +  -->
-<!--     #geom_bar(stat = "identity", position=position_dodge())+  -->
-<!--     geom_line(aes(color = kpi))+ -->
-<!--     geom_point(aes(color = kpi))+ -->
-<!--     scale_fill_brewer(palette="Dark2")+ -->
-<!--     scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + -->
-<!--     labs( x="",y = "") + -->
-<!--     theme(legend.position="top") -->
-<!-- ) -->
-
-<!-- ``` -->
-
-<!-- > Autonomia financeira = Capital Próprio / Ativo; Solvabilidade = Capital Próprio / Passivo; Endividamento = Passivo / Ativo -->
-
-<!-- Operation {data-orientation=rows data-navmenu=Details} -->
-<!-- ======================================================================= -->
-
-<!-- Row {data-width=500} -->
-<!-- ----------------------------------------------------------------------- -->
-
-<!-- ### Performance -->
-
-<!-- ```{r} -->
-
-<!-- renderPlotly( -->
-
-<!--   data() %>%  -->
-<!--   select(date, contains("kpi")) %>%  -->
-<!--   gather("kpi","value",contains("kpi")) %>%  -->
-<!--   mutate(kpi = factor(kpi)) %>%  -->
-<!--   filter(kpi %in% c("kpi0009","kpi0008","kpi0007")) %>%  -->
-<!--   mutate(kpi = forcats::fct_recode(kpi, "ROCE (%)" = "kpi0009", "Ebitda (%)" = "kpi0008", "Gross Margin (%)" = "kpi0007")) %>%  -->
-<!--   ggplot(aes(x = date, y = value, group = kpi)) +  -->
-<!--   geom_line(aes(color = kpi))+ -->
-<!--   geom_point(aes(color = kpi)) + -->
-<!--   scale_color_brewer(palette="Dark2")+ -->
-<!--   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + -->
-<!--   labs( x="",y = "") + -->
-<!--   theme(legend.position="top") -->
-<!--   ) -->
-
-<!-- ``` -->
-
-<!-- Row {data-width=500} -->
-<!-- ----------------------------------------------------------------------- -->
-
-
-
-
+```
 
 <!-- Market -->
 <!-- ======================================================================= -->
