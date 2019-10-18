@@ -33,6 +33,7 @@ library(viridis) # plot color
 library(shinysky)
 library(shinyWidgets)
 library(caret) # predictive models
+library(xts) # manipulate time series
 
 source("R/functions.R") # helper functions used during the project
 source("R/sql.R") # helper with sql queries
@@ -619,66 +620,64 @@ Row
 ### Contributo inventários
 ```{r}
 
+inv_cont <- reactive({
+  
+  data <- nfm() %>%
+  select(date, inv_vnd) %>% 
+  mutate(date = ymd(date)) %>% 
+  left_join(select(sales_kpi(),date, margem_bruta = margem_bruta), by="date") %>% 
+  mutate(tme = inv_vnd/(1-margem_bruta)) 
+  
+  data <- xts(select(data,-date),order.by = data$date)
+  data <- merge(data, diff(data$tme), diff(data$margem_bruta),diff(data$inv_vnd))
+  
+  data$peso_tme <- data$tme.1*(1-data$margem_bruta-data$margem_bruta.1)
+  data$peso_mb <- (data$tme - data$tme.1)*(-data$margem_bruta.1)
+  data <- fortify(data) #converts to dataframe
+ 
+  data
+  })
+
 renderPlotly(
-  nfm() %>% 
-    select(date, inv_vnd) %>% 
-    mutate(date = ymd(date)) %>% 
-    left_join(select(sales_kpi(),date, margem_bruta = margem_bruta), by="date") %>% 
-    mutate(inv_vnd = inv_vnd, 
-           tme = inv_vnd/(1-margem_bruta),
-           peso_tme = tme/inv_vnd,
-           peso_mb = margem_bruta*peso_tme) %>% 
-    select(date,peso_mb,peso_tme) %>% 
-    gather("kpi","value",-date) %>% 
-    ggplot(aes(x = date,y =value ,fill = kpi)) +
-    geom_bar(stat="identity",position=position_dodge())+
-    scale_fill_brewer(palette= "Paired",labels = c("Peso margem bruta %" , "Peso TME %")) +
-    labs( x="",y = "", fill = "") +
-    theme(legend.position="top")
-)
-
-```
-
-
-### Outros contributos
-```{r}
-
-```
-
-Recursos cíclicos {data-navmenu=Análises data-orientation=rows}
-======================================================================= 
-
-Row
------------------------------------------------------------------------
-
-### Necessidades (dias de vendas)
-```{r}
-renderPlotly(
-  nfm() %>% 
-    select(date,forn_vnd,routros_vnd) %>% 
-    gather("kpi","value",-date) %>% 
-    mutate(kpi=factor(kpi)) %>% 
-    ggplot(aes(x=date,y=value,group=kpi)) +
-    geom_line(aes(color=kpi)) +
-    geom_point(aes(color=kpi)) +
-    scale_color_brewer(palette="Paired") +
+  inv_cont() %>% 
+    select(Index,peso_tme, peso_mb) %>% 
+    gather("kpi","value",-Index) %>% 
+    filter(!is.na(value)) %>% 
+    mutate(kpi = factor(kpi,labels = c("mb","tme"))) %>% 
+    ggplot(aes(x = Index,y =value ,color = kpi)) +
+    geom_line() +
     labs( x="",y = "", color = "") +
     theme(legend.position="top")
 )
-```
-
-Row
------------------------------------------------------------------------
-
-### Contributo fornecedores
-```{r}
 
 ```
+
+> Impact das variações da margem bruta e do tempo médio de existências na necessiade cíclica de inventários em dias de vendas. (ex: peso tme = 14 significa que o aumento do tempo em armazém aumentou em 14 dias as necessidades de fundo de maneio.)
 
 ### Outros contributos
 ```{r}
+  
+renderPlotly({
+  fun_bal() %>% 
+    filter(funcional_code %in% c("F0008","F0009","F0010","F0011")) %>% 
+    select(-rubrica) %>% 
+    gather(key = "date", value = "value", -funcional_code)  %>% 
+    spread(funcional_code, value) %>% 
+    mutate(ad_forn = F0008/F0011, estado = F0009/F0011, ode = F0010/F0011) %>% 
+    select(-contains("F0")) %>% 
+    gather(key = "kpi", value = "value", -date) %>% 
+    filter(!is.na(value)) %>% 
+    ggplot(aes(x = as.Date(date), y = value, fill=kpi))+
+    geom_bar(stat = "identity") +
+    scale_fill_brewer(palette="Dark2") + 
+    labs(x="",y="")
+    
+})
 
 ```
+
+> Representa o peso nas necessidades cíclicas de outras rubricas. Valores em percentagem do total de necessidades cíclicas.
+
 
 <!-- Market -->
 <!-- ======================================================================= -->
