@@ -1,5 +1,5 @@
 
--- SQL script that creats financial statement from ledger and adds it to statement table
+-- SQL script that creates financial statement from ledger and adds it to statement table
 -- To work the script has to achieve the following: 
 -- 
 -- 1. Sums ledger values with similiar ies code

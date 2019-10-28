@@ -5,6 +5,6 @@ account: mosaic-lazarus
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1279820
-bundleId: 2487802
+bundleId: 2544453
 url: https://mosaic-lazarus.shinyapps.io/dash/
-when: 1570718995.15306
+when: 1572278354.85543

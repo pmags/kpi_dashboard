@@ -44,12 +44,21 @@ theme_set(
     theme(legend.position = "right"))
 
 # connection to data base server
+# con <- dbConnect(RPostgres::Postgres(),
+#                 dbname = "nors",
+#                 host = "89.154.64.8",
+#                 port = 5433,
+#                 user = "pi",
+#                 password = "admin")
+
 con <- dbConnect(RPostgres::Postgres(),
-                dbname = "nors",
+                dbname = "nors_dev",
                 host = "89.154.64.8",
                 port = 5433,
                 user = "pi",
                 password = "admin")
+
+
 ```
 
 
